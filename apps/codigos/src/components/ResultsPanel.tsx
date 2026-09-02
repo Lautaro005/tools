@@ -53,9 +53,15 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
     },
     {
       code: 'CCom',
-      name: 'Código de Comercio (Normativa Histórica)',
+      name: 'Código de Comercio',
       icon: <Landmark size={16} className="text-amber-400" />,
       articles: articles.filter(a => a.code === 'CCom')
+    },
+    {
+      code: 'CCVS',
+      name: 'Código Civil de Vélez Sarsfield',
+      icon: <Landmark size={16} className="text-amber-400" />,
+      articles: articles.filter(a => a.code === 'CCVS')
     }
   ];
 
@@ -123,6 +129,11 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
                 <h3 className="text-sm font-semibold text-[#F2F2F0]">
                   {group.name}
                 </h3>
+                {(group.code === 'CCom' || group.code === 'CCVS') && (
+                  <span className="rounded border border-rose-400/30 bg-rose-400/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-rose-300">
+                    Derogado
+                  </span>
+                )}
               </div>
               <span className="rounded-full bg-[#131316] border border-[#1E1E24] px-2.5 py-0.5 text-[11px] font-mono text-[#D4A843]">
                 {group.articles.length} {group.articles.length === 1 ? 'artículo' : 'artículos'}

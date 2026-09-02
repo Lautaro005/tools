@@ -4,8 +4,11 @@ const STOP_WORDS = new Set([
   'de', 'la', 'el', 'los', 'las', 'un', 'una', 'unos', 'unas', 'que', 'es',
   'en', 'por', 'para', 'con', 'su', 'sus', 'del', 'al', 'se', 'lo', 'como',
   'cual', 'cuales', 'son', 'a', 'e', 'o', 'u', 'y', 'sobre', 'entre', 'sin',
-  'ante', 'bajo', 'cabe', 'desde', 'hacia', 'hasta', 'tras'
+  'ante', 'bajo', 'cabe', 'desde', 'hacia', 'hasta', 'tras', 'pasa', 'si',
+  'caso', 'casos', 'persona', 'personas', 'alguien', 'algo'
 ]);
+
+const HOMICIDE_QUERY = /\b(mat(?:ar|o|as|e|an|aron)|muerte|muere|murio|homicidio|asesin)/i;
 
 export function normalizeText(text: string): string {
   return text
@@ -34,6 +37,7 @@ export function searchArticles(
   const rawWords = normQ.split(' ').filter(w => w.length > 1 && !STOP_WORDS.has(w));
   const strippedWords = strippedQ.split(' ').filter(w => w.length > 1 && !STOP_WORDS.has(w));
   const strippedPhrase = strippedWords.join(' ');
+  const isHomicideQuery = HOMICIDE_QUERY.test(normQ);
 
   const isDefQuery =
     /^(que es|que son|concepto|definicion|que se entiende)/i.test(normQ) ||
@@ -53,11 +57,20 @@ export function searchArticles(
     }
 
     let score = 0;
+    let substantiveMatches = 0;
     const titleNorm = normalizeText(article.title);
     const textNorm = normalizeText(article.text);
     const titleStripped = stripPlurals(titleNorm);
     const textStripped = stripPlurals(textNorm);
     const numNorm = article.number.toLowerCase();
+
+    // Intent rules keep plain-language criminal questions from being drowned out
+    // by generic words such as "persona" in civil-law articles.
+    if (isHomicideQuery && article.code === 'CPen') {
+      if (HOMICIDE_QUERY.test(textNorm) || HOMICIDE_QUERY.test(titleNorm)) score += 200;
+      if (numNorm === '79') score += 420; // homicidio simple
+      if (['80', '81', '82', '83', '84', '84 bis', '85', '86', '41 bis'].includes(numNorm)) score += 180;
+    }
 
     // 1. Direct article number match
     if (requestedNumber && (numNorm === requestedNumber || numNorm.startsWith(requestedNumber + ' '))) {
@@ -88,14 +101,14 @@ export function searchArticles(
 
     // 3. Exact raw words match
     for (const w of rawWords) {
-      if (titleNorm.includes(w)) score += 35;
-      if (textNorm.includes(w)) score += 12;
+      if (titleNorm.includes(w)) { score += 35; substantiveMatches++; }
+      if (textNorm.includes(w)) { score += 12; substantiveMatches++; }
     }
 
     // 4. Stripped words match (covers plurals and gender)
     for (const w of strippedWords) {
-      if (titleStripped.includes(w)) score += 25;
-      if (textStripped.includes(w)) score += 10;
+      if (titleStripped.includes(w)) { score += 25; substantiveMatches++; }
+      if (textStripped.includes(w)) { score += 10; substantiveMatches++; }
     }
 
     // 5. Query tokens coverage
@@ -110,7 +123,11 @@ export function searchArticles(
       }
     }
 
-    if (score > 35) {
+    // A criminal-intent query should never surface civil articles merely because
+    // they contain a broad term. Penal articles are retained by the intent rule.
+    if (isHomicideQuery && article.code !== 'CPen') continue;
+
+    if (score > 35 && (requestedNumber || isHomicideQuery || substantiveMatches >= 2 || strippedPhrase.length > 2 && textStripped.includes(strippedPhrase))) {
       results.push({
         article: { ...article, score },
         score

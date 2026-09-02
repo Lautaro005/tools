@@ -18,7 +18,7 @@ export const Hero: React.FC<HeroProps> = ({ hasSearched }) => {
         {/* Subtle pill */}
         <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#D4A843]/30 bg-[#D4A843]/10 px-3.5 py-1 text-xs font-medium text-[#D4A843]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#D4A843]" />
-          <span>Normativa Argentina · CCyC + CPen + CCom</span>
+          <span>Normativa Argentina · CCyC + CPen + códigos históricos</span>
         </div>
 
         {/* Display Title */}

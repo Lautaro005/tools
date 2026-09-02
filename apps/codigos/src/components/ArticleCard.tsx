@@ -35,6 +35,11 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
           <span className="inline-flex items-center rounded border border-[#D4A843]/30 bg-[#D4A843]/10 px-2 py-0.5 text-xs font-mono font-semibold text-[#D4A843]">
             {article.code}
           </span>
+          {article.isRepealed && (
+            <span className="inline-flex items-center rounded border border-rose-400/30 bg-rose-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-rose-300">
+              Derogado
+            </span>
+          )}
 
           {/* Article Header */}
           <h3 className="text-base font-semibold text-[#F2F2F0] group-hover:text-[#D4A843] transition-colors">

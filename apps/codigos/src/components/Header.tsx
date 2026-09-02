@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Settings as SettingsIcon, BookOpen } from 'lucide-react';
+import { Settings as SettingsIcon, BookOpen, House } from 'lucide-react';
 
 interface HeaderProps {
   onOpenSettings: () => void;
@@ -44,6 +44,16 @@ export const Header: React.FC<HeaderProps> = ({
               <span>{totalArticles.toLocaleString('es-AR')} artículos</span>
             </div>
           )}
+
+          <a
+            href="../../index.html"
+            className="flex h-9 items-center gap-1.5 rounded-lg border border-[#1E1E24] bg-[#131316] px-2.5 text-xs font-medium text-[#8A8A94] transition-colors hover:border-[#D4A843]/50 hover:text-[#D4A843]"
+            title="Volver a Apps Personales"
+            aria-label="Volver a la página principal de herramientas"
+          >
+            <House size={16} />
+            <span className="hidden sm:inline">Inicio</span>
+          </a>
 
           {/* Settings Trigger */}
           <motion.button
