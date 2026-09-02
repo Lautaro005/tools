@@ -10,14 +10,6 @@ export const Footer: React.FC = () => {
           <span>Plataforma de búsqueda y análisis normativo argentino</span>
         </div>
 
-        <div className="flex items-center gap-4 text-[11px]">
-          <span>Código Civil y Comercial</span>
-          <span>•</span>
-          <span>Código Penal</span>
-          <span>•</span>
-          <span>Código de Comercio</span>
-        </div>
-
         <div className="text-[11px] text-[#8A8A94]/70">
           OpenMaus Tools Suite · 2025
         </div>

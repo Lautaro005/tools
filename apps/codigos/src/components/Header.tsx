@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Settings as SettingsIcon, BookOpen, ArrowLeft } from 'lucide-react';
+import { Settings as SettingsIcon, BookOpen, Home } from 'lucide-react';
 
 interface HeaderProps {
   onOpenSettings: () => void;
@@ -18,20 +18,8 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[#1E1E24] bg-[#0C0C0E]/90 backdrop-blur-md transition-colors">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        {/* Left Side: Back to Tools link + App Branding */}
+        {/* Left Side: App Branding */}
         <div className="flex items-center gap-3 sm:gap-4">
-          <a
-            href="../../index.html"
-            className="flex h-9 items-center gap-1.5 rounded-lg border border-[#1E1E24] bg-[#131316] px-3 text-xs font-medium text-[#8A8A94] transition-all hover:border-[#D4A843]/50 hover:bg-[#D4A843]/10 hover:text-[#D4A843]"
-            title="Volver al catálogo principal de herramientas"
-            aria-label="Volver a todas las herramientas"
-          >
-            <ArrowLeft size={15} className="text-[#D4A843]" />
-            <span className="hidden sm:inline text-[#8A8A94]">Volver a </span>
-            <span className="font-semibold text-[#F2F2F0] hover:text-[#D4A843]">Herramientas</span>
-          </a>
-
-          <div className="h-4 w-px bg-[#1E1E24]" />
 
           {/* Logo / Wordmark */}
           <button
@@ -53,7 +41,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
 
-        {/* Right side: article count + Settings */}
+        {/* Right side: article count + Home link + Settings */}
         <div className="flex items-center gap-3">
           {totalArticles > 0 && (
             <div className="hidden items-center gap-1.5 rounded-full border border-[#1E1E24] bg-[#131316] px-3 py-1 text-xs text-[#8A8A94] sm:flex">
@@ -61,6 +49,18 @@ export const Header: React.FC<HeaderProps> = ({
               <span>{totalArticles.toLocaleString('es-AR')} artículos</span>
             </div>
           )}
+
+          {/* Volver a Herramientas (Inicio) */}
+          <motion.a
+            href="../../index.html"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.94 }}
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#1E1E24] bg-[#131316] text-[#8A8A94] transition-all hover:border-[#D4A843]/50 hover:bg-[#D4A843]/10 hover:text-[#D4A843]"
+            title="Volver a la suite de herramientas"
+            aria-label="Volver a herramientas"
+          >
+            <Home size={18} />
+          </motion.a>
 
           {/* Settings Trigger */}
           <motion.button
