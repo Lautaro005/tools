@@ -130,6 +130,17 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           </button>
           <button
             type="button"
+            onClick={() => onFilterChange('CNA')}
+            className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+              activeFilter === 'CNA'
+                ? 'bg-[#D4A843]/15 text-[#D4A843]'
+                : 'text-[#8A8A94] hover:text-[#F2F2F0]'
+            }`}
+          >
+            Constitución
+          </button>
+          <button
+            type="button"
             onClick={() => onFilterChange('CCom')}
             className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
               activeFilter === 'CCom'

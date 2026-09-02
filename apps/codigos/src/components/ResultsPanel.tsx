@@ -52,6 +52,12 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
       articles: articles.filter(a => a.code === 'CPen')
     },
     {
+      code: 'CNA',
+      name: 'Constitución de la Nación Argentina',
+      icon: <Landmark size={16} className="text-sky-300" />,
+      articles: articles.filter(a => a.code === 'CNA')
+    },
+    {
       code: 'CCom',
       name: 'Código de Comercio',
       icon: <Landmark size={16} className="text-amber-400" />,

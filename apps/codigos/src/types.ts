@@ -1,4 +1,4 @@
-export type CodeType = 'CCyC' | 'CPen' | 'CCom' | 'CCVS';
+export type CodeType = 'CCyC' | 'CPen' | 'CCom' | 'CCVS' | 'CNA';
 
 export interface Article {
   id: string;

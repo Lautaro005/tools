@@ -168,6 +168,45 @@ def process_ccvs(pdf_path: str):
     print(f"CCVS extracted: {len(result)} articles")
     return result
 
+def process_cna(pdf_path: str):
+    """Extract the numbered provisions of the current National Constitution.
+
+    This edition continues with constitutional treaties after the Constitution
+    itself, so only pages 8–61 (zero-based 7–60) are considered.  The final
+    page in that interval ends with article 129 and the transitional clauses.
+    """
+    print("Processing Constitución Nacional...")
+    reader = PdfReader(pdf_path)
+    pages = []
+    for index in range(7, 61):
+        page = reader.pages[index].extract_text() or ""
+        # The printed page number is extracted as a standalone line and would
+        # otherwise be inserted into the middle of a sentence at page breaks.
+        page = re.sub(r'^\s*\d+\s*$', '', page, flags=re.MULTILINE)
+        pages.append(page)
+    full_text = "\n".join(pages)
+
+    pattern = re.compile(
+        r'(?:^|\n)\s*Art[ií]culo\s+(\d+(?:\s*(?:bis|ter))?)\s*(?:o|º|°)?\s*\.\-\s*(.*?)(?=(?:^|\n)\s*Art[ií]culo\s+\d+(?:\s*(?:bis|ter))?\s*(?:o|º|°)?\s*\.\-|\Z)',
+        re.IGNORECASE | re.DOTALL,
+    )
+    articles = {}
+    for match in pattern.finditer(full_text):
+        number = match.group(1).strip()
+        body = clean_text(match.group(2))
+        if len(body) > 10:
+            articles.setdefault(number, {
+                "id": f"cna-{number.replace(' ', '-')}",
+                "code": "CNA",
+                "codeName": "Constitución de la Nación Argentina",
+                "number": number,
+                "title": f"Artículo {number}",
+                "text": body,
+            })
+    result = list(articles.values())
+    print(f"CNA extracted: {len(result)} articles (expected 130, including 14 bis)")
+    return result
+
 def main():
     app_dir = Path(__file__).resolve().parent
     pdf_dir = app_dir / "pdfs"
@@ -175,14 +214,16 @@ def main():
     cpen_file = pdf_dir / "CODIGO PENAL DE LA NACION ARGENTINA.pdf"
     ccom_file = pdf_dir / "Codigo de Comercio.pdf"
     ccvs_file = next(pdf_dir.glob("*V*lez*Sarsfield.pdf"))
+    cna_file = next(pdf_dir.glob("*constituci*n nacional.pdf"))
     
     ccyc = process_ccyc(ccyc_file)
     cpen = process_cpen(cpen_file)
     ccom = process_ccom(ccom_file)
     ccvs = process_ccvs(ccvs_file)
+    cna = process_cna(cna_file)
     
-    all_articles = ccyc + cpen + ccom + ccvs
-    print(f"Total articles extracted across all 4 codes: {len(all_articles)}")
+    all_articles = ccyc + cpen + ccom + ccvs + cna
+    print(f"Total articles extracted across all 5 codes: {len(all_articles)}")
     
     output_dir = app_dir / "data"
     output_dir.mkdir(exist_ok=True)
