@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Settings as SettingsIcon, BookOpen, House } from 'lucide-react';
+import { Settings as SettingsIcon, BookOpen, ArrowLeft } from 'lucide-react';
 
 interface HeaderProps {
   onOpenSettings: () => void;
@@ -16,25 +16,42 @@ export const Header: React.FC<HeaderProps> = ({
   onReset
 }) => {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[#1E1E24] bg-[#0C0C0E]/85 backdrop-blur-md transition-colors">
+    <header className="sticky top-0 z-40 w-full border-b border-[#1E1E24] bg-[#0C0C0E]/90 backdrop-blur-md transition-colors">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        {/* Logo / Wordmark */}
-        <button
-          onClick={onReset}
-          className="group flex items-center gap-2.5 text-left transition-opacity hover:opacity-90"
-        >
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#D4A843]/30 bg-[#D4A843]/10 text-[#D4A843] transition-colors group-hover:border-[#D4A843]/60 group-hover:bg-[#D4A843]/20">
-            <BookOpen size={16} />
-          </div>
-          <div className="flex items-baseline gap-1">
-            <span className="text-xl font-bold tracking-[-0.04em] text-[#F2F2F0]">
-              códigos<span className="text-[#D4A843]">·</span>ar
-            </span>
-            <span className="hidden text-xs font-medium text-[#8A8A94] sm:inline-block">
-              normativa ia
-            </span>
-          </div>
-        </button>
+        {/* Left Side: Back to Tools link + App Branding */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <a
+            href="../../index.html"
+            className="flex h-9 items-center gap-1.5 rounded-lg border border-[#1E1E24] bg-[#131316] px-3 text-xs font-medium text-[#8A8A94] transition-all hover:border-[#D4A843]/50 hover:bg-[#D4A843]/10 hover:text-[#D4A843]"
+            title="Volver al catálogo principal de herramientas"
+            aria-label="Volver a todas las herramientas"
+          >
+            <ArrowLeft size={15} className="text-[#D4A843]" />
+            <span className="hidden sm:inline text-[#8A8A94]">Volver a </span>
+            <span className="font-semibold text-[#F2F2F0] hover:text-[#D4A843]">Herramientas</span>
+          </a>
+
+          <div className="h-4 w-px bg-[#1E1E24]" />
+
+          {/* Logo / Wordmark */}
+          <button
+            onClick={onReset}
+            className="group flex items-center gap-2.5 text-left transition-opacity hover:opacity-90"
+            title="Reiniciar búsqueda"
+          >
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#D4A843]/30 bg-[#D4A843]/10 text-[#D4A843] transition-colors group-hover:border-[#D4A843]/60 group-hover:bg-[#D4A843]/20">
+              <BookOpen size={16} />
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-lg sm:text-xl font-bold tracking-[-0.04em] text-[#F2F2F0]">
+                códigos<span className="text-[#D4A843]">·</span>ar
+              </span>
+              <span className="hidden text-xs font-medium text-[#8A8A94] lg:inline-block">
+                normativa ia
+              </span>
+            </div>
+          </button>
+        </div>
 
         {/* Right side: article count + Settings */}
         <div className="flex items-center gap-3">
@@ -44,16 +61,6 @@ export const Header: React.FC<HeaderProps> = ({
               <span>{totalArticles.toLocaleString('es-AR')} artículos</span>
             </div>
           )}
-
-          <a
-            href="../../index.html"
-            className="flex h-9 items-center gap-1.5 rounded-lg border border-[#1E1E24] bg-[#131316] px-2.5 text-xs font-medium text-[#8A8A94] transition-colors hover:border-[#D4A843]/50 hover:text-[#D4A843]"
-            title="Volver a Apps Personales"
-            aria-label="Volver a la página principal de herramientas"
-          >
-            <House size={16} />
-            <span className="hidden sm:inline">Inicio</span>
-          </a>
 
           {/* Settings Trigger */}
           <motion.button

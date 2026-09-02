@@ -49,6 +49,13 @@ export function searchArticles(
   const artNumberMatch = rawQuery.match(/(?:art(?:[ií]culo)?\.?\s*)?(\d+(?:\s*(?:bis|ter|quater))?)/i);
   const requestedNumber = artNumberMatch ? artNumberMatch[1].trim().toLowerCase() : null;
 
+  // Code explicit mention detection
+  const mentionsCCyC = /\b(ccyc|civil y comercial)\b/i.test(normQ);
+  const mentionsCPen = /\b(cpen|penal|codigo penal)\b/i.test(normQ);
+  const mentionsCNA = /\b(cna|constitucion|constitucional)\b/i.test(normQ);
+  const mentionsCCom = /\b(ccom|comercio|codigo de comercio)\b/i.test(normQ);
+  const mentionsCCVS = /\b(ccvs|velez|sarsfield)\b/i.test(normQ);
+
   const results: { article: Article; score: number }[] = [];
 
   for (const article of articles) {
@@ -72,9 +79,20 @@ export function searchArticles(
       if (['80', '81', '82', '83', '84', '84 bis', '85', '86', '41 bis'].includes(numNorm)) score += 180;
     }
 
+    // Boost articles when the user explicitly mentions the specific legal body
+    if (mentionsCCyC && article.code === 'CCyC') score += 350;
+    if (mentionsCPen && article.code === 'CPen') score += 350;
+    if (mentionsCNA && article.code === 'CNA') score += 350;
+    if (mentionsCCom && article.code === 'CCom') score += 350;
+    if (mentionsCCVS && article.code === 'CCVS') score += 350;
+
     // 1. Direct article number match
-    if (requestedNumber && (numNorm === requestedNumber || numNorm.startsWith(requestedNumber + ' '))) {
-      score += 450;
+    if (requestedNumber) {
+      if (numNorm === requestedNumber) {
+        score += 480;
+      } else if (numNorm.startsWith(requestedNumber + ' ')) {
+        score += 320;
+      }
     }
 
     // 2. Exact stripped phrase match

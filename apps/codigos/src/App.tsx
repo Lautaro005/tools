@@ -32,7 +32,7 @@ export const App: React.FC = () => {
 
   // Handle AI summary fetch
   const triggerSummary = useCallback(
-    async (queryText: string, foundArticles: Article[]) => {
+    async (queryText: string, foundArticles: Article[], filter: 'ALL' | CodeType = activeFilter) => {
       if (!settings.apiKey.trim()) {
         setSummary(null);
         setSummaryError(null);
@@ -54,7 +54,8 @@ export const App: React.FC = () => {
           settings.apiKey,
           settings.model,
           queryText,
-          foundArticles
+          foundArticles,
+          filter
         );
         setSummary(text);
       } catch (err: any) {
@@ -64,7 +65,7 @@ export const App: React.FC = () => {
         setIsSummaryLoading(false);
       }
     },
-    [settings.apiKey, settings.model]
+    [settings.apiKey, settings.model, activeFilter]
   );
 
   // User triggers a search
@@ -72,7 +73,7 @@ export const App: React.FC = () => {
     (query: string) => {
       setCurrentQuery(query);
       const results = searchArticles(articles, query, activeFilter);
-      triggerSummary(query, results);
+      triggerSummary(query, results, activeFilter);
     },
     [articles, activeFilter, triggerSummary]
   );
@@ -83,7 +84,7 @@ export const App: React.FC = () => {
       setActiveFilter(newFilter);
       if (currentQuery.trim()) {
         const results = searchArticles(articles, currentQuery, newFilter);
-        triggerSummary(currentQuery, results);
+        triggerSummary(currentQuery, results, newFilter);
       }
     },
     [articles, currentQuery, triggerSummary]
@@ -91,9 +92,9 @@ export const App: React.FC = () => {
 
   const handleRetrySummary = useCallback(() => {
     if (currentQuery.trim()) {
-      triggerSummary(currentQuery, matchedArticles);
+      triggerSummary(currentQuery, matchedArticles, activeFilter);
     }
-  }, [currentQuery, matchedArticles, triggerSummary]);
+  }, [currentQuery, matchedArticles, activeFilter, triggerSummary]);
 
   const handleReset = useCallback(() => {
     setCurrentQuery('');

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, Key, ExternalLink, Eye, EyeOff } from 'lucide-react';
+import { X, Check, Key, ExternalLink, Eye, EyeOff, Plus } from 'lucide-react';
 import { Settings } from '../types';
 
 interface SettingsModalProps {
@@ -10,12 +10,7 @@ interface SettingsModalProps {
   onSave: (settings: Settings) => void;
 }
 
-const COMMON_MODELS = [
-  { id: 'google/gemini-2.0-flash-001', label: 'Gemini 2.0 Flash (Rápido y económico)' },
-  { id: 'openai/gpt-4o-mini', label: 'GPT-4o Mini (OpenAI)' },
-  { id: 'deepseek/deepseek-chat', label: 'DeepSeek V3 (Económico)' },
-  { id: 'anthropic/claude-3.5-haiku', label: 'Claude 3.5 Haiku (Preciso)' }
-];
+const STORAGE_KEY_SAVED_MODELS = 'codigos_ar_saved_models';
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
   isOpen,
@@ -27,6 +22,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [model, setModel] = useState(settings.model);
   const [showKey, setShowKey] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [savedModels, setSavedModels] = useState<string[]>(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_SAVED_MODELS);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
 
   useEffect(() => {
     setApiKey(settings.apiKey);
@@ -44,6 +47,32 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
+
+  const handleAddSavedModel = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    const trimmed = model.trim();
+    if (!trimmed) return;
+    if (!savedModels.includes(trimmed)) {
+      const updated = [...savedModels, trimmed];
+      setSavedModels(updated);
+      try {
+        localStorage.setItem(STORAGE_KEY_SAVED_MODELS, JSON.stringify(updated));
+      } catch (err) {
+        console.error('Error saving model to localStorage:', err);
+      }
+    }
+  };
+
+  const handleRemoveSavedModel = (modelToRemove: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = savedModels.filter(m => m !== modelToRemove);
+    setSavedModels(updated);
+    try {
+      localStorage.setItem(STORAGE_KEY_SAVED_MODELS, JSON.stringify(updated));
+    } catch (err) {
+      console.error('Error removing model from localStorage:', err);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,36 +165,65 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               {/* Model */}
               <div>
                 <label className="block text-xs font-medium uppercase tracking-wider text-[#8A8A94] mb-1.5">
-                  Modelo de IA
+                  Modelo de IA (OpenRouter)
                 </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={model}
-                    onChange={(e) => setModel(e.target.value)}
-                    placeholder="google/gemini-2.0-flash-001"
-                    className="w-full rounded-lg border border-[#1E1E24] bg-[#0C0C0E] px-3.5 py-2.5 text-sm font-mono text-[#F2F2F0] placeholder-[#8A8A94]/50 focus:border-[#D4A843] focus:outline-none transition-colors"
-                    required
-                  />
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      value={model}
+                      onChange={(e) => setModel(e.target.value)}
+                      placeholder="ej: google/gemini-2.0-flash-001"
+                      className="w-full rounded-lg border border-[#1E1E24] bg-[#0C0C0E] px-3.5 py-2.5 text-sm font-mono text-[#F2F2F0] placeholder-[#8A8A94]/50 focus:border-[#D4A843] focus:outline-none transition-colors"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddSavedModel}
+                    disabled={!model.trim() || savedModels.includes(model.trim())}
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#1E1E24] bg-[#0C0C0E] text-[#D4A843] transition-colors hover:border-[#D4A843]/50 hover:bg-[#D4A843]/10 disabled:opacity-40 disabled:cursor-not-allowed"
+                    title={savedModels.includes(model.trim()) ? 'Modelo ya guardado en lista' : 'Guardar este modelo (+)'}
+                    aria-label="Guardar modelo"
+                  >
+                    <Plus size={18} />
+                  </button>
                 </div>
 
-                {/* Quick Model Selector Pills */}
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {COMMON_MODELS.map((m) => (
-                    <button
-                      key={m.id}
-                      type="button"
-                      onClick={() => setModel(m.id)}
-                      className={`rounded-md px-2 py-1 text-[11px] transition-colors ${
-                        model === m.id
-                          ? 'border border-[#D4A843]/40 bg-[#D4A843]/15 text-[#D4A843]'
-                          : 'border border-[#1E1E24] bg-[#0C0C0E] text-[#8A8A94] hover:text-[#F2F2F0]'
-                      }`}
-                    >
-                      {m.id.split('/')[1]}
-                    </button>
-                  ))}
-                </div>
+                {/* User Saved Models */}
+                {savedModels.length > 0 ? (
+                  <div className="mt-2.5">
+                    <span className="block text-[11px] text-[#8A8A94] mb-1.5">Modelos guardados:</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {savedModels.map((m) => (
+                        <div
+                          key={m}
+                          onClick={() => setModel(m)}
+                          className={`group flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-mono cursor-pointer transition-colors ${
+                            model === m
+                              ? 'border border-[#D4A843]/40 bg-[#D4A843]/15 text-[#D4A843]'
+                              : 'border border-[#1E1E24] bg-[#0C0C0E] text-[#8A8A94] hover:text-[#F2F2F0] hover:border-[#1E1E24]/80'
+                          }`}
+                          title={`Seleccionar ${m}`}
+                        >
+                          <span className="max-w-[220px] truncate">{m}</span>
+                          <button
+                            type="button"
+                            onClick={(e) => handleRemoveSavedModel(m, e)}
+                            className="opacity-50 hover:opacity-100 hover:text-rose-400 transition-opacity p-0.5"
+                            title="Eliminar de guardados"
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="mt-2 text-[11px] text-[#8A8A94]">
+                    Escribí el modelo deseado y hacé click en <span className="text-[#D4A843] font-semibold">+</span> para guardarlo y reutilizarlo cuando quieras.
+                  </p>
+                )}
               </div>
 
               {/* Actions */}

@@ -10,11 +10,11 @@ interface SearchBarProps {
 }
 
 const SUGGESTIONS = [
-  'que es una persona jurídica',
+  'art 14 bis constitucion',
   'legítima defensa',
-  'homicidio simple',
-  'prescripción',
+  'que es una persona jurídica',
   'actos de comercio',
+  'prescripción',
   'art 141 ccyc'
 ];
 
@@ -92,13 +92,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       </form>
 
       {/* Code Filter Tabs + Suggestions */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
+      <div className="space-y-2 pt-1 text-xs">
         {/* Code Filters */}
-        <div className="flex items-center gap-1 rounded-lg border border-[#1E1E24] bg-[#0C0C0E] p-1">
+        <div className="flex flex-wrap items-center gap-1 rounded-lg border border-[#1E1E24] bg-[#0C0C0E] p-1">
           <button
             type="button"
             onClick={() => onFilterChange('ALL')}
-            className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+            className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
               activeFilter === 'ALL'
                 ? 'bg-[#1E1E24] text-[#F2F2F0]'
                 : 'text-[#8A8A94] hover:text-[#F2F2F0]'
@@ -109,7 +109,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           <button
             type="button"
             onClick={() => onFilterChange('CCyC')}
-            className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+            className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
               activeFilter === 'CCyC'
                 ? 'bg-[#D4A843]/15 text-[#D4A843]'
                 : 'text-[#8A8A94] hover:text-[#F2F2F0]'
@@ -120,7 +120,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           <button
             type="button"
             onClick={() => onFilterChange('CPen')}
-            className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+            className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
               activeFilter === 'CPen'
                 ? 'bg-[#D4A843]/15 text-[#D4A843]'
                 : 'text-[#8A8A94] hover:text-[#F2F2F0]'
@@ -131,7 +131,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           <button
             type="button"
             onClick={() => onFilterChange('CNA')}
-            className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+            className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
               activeFilter === 'CNA'
                 ? 'bg-[#D4A843]/15 text-[#D4A843]'
                 : 'text-[#8A8A94] hover:text-[#F2F2F0]'
@@ -142,31 +142,31 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           <button
             type="button"
             onClick={() => onFilterChange('CCom')}
-            className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+            className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
               activeFilter === 'CCom'
                 ? 'bg-[#D4A843]/15 text-[#D4A843]'
                 : 'text-[#8A8A94] hover:text-[#F2F2F0]'
             }`}
           >
-            CCom
+            Comercio <span className="text-rose-400 text-[10px] font-normal">(derogado)</span>
           </button>
           <button
             type="button"
             onClick={() => onFilterChange('CCVS')}
-            className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+            className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
               activeFilter === 'CCVS'
                 ? 'bg-[#D4A843]/15 text-[#D4A843]'
                 : 'text-[#8A8A94] hover:text-[#F2F2F0]'
             }`}
           >
-            Vélez <span className="text-rose-300">(der.)</span>
+            Vélez <span className="text-rose-400 text-[10px] font-normal">(derogado)</span>
           </button>
         </div>
 
         {/* Suggestion Chips */}
         <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-[#8A8A94]">
           <span className="hidden sm:inline">Ejemplos:</span>
-          {SUGGESTIONS.slice(0, 4).map((sug) => (
+          {SUGGESTIONS.slice(0, 5).map((sug) => (
             <button
               key={sug}
               type="button"

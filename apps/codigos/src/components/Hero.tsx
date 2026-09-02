@@ -18,7 +18,7 @@ export const Hero: React.FC<HeroProps> = ({ hasSearched }) => {
         {/* Subtle pill */}
         <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#D4A843]/30 bg-[#D4A843]/10 px-3.5 py-1 text-xs font-medium text-[#D4A843]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#D4A843]" />
-          <span>Normativa Argentina · CCyC + CPen + códigos históricos</span>
+          <span>Normativa Argentina · Constitución Nacional + Códigos Vigentes e Históricos</span>
         </div>
 
         {/* Display Title */}
@@ -29,7 +29,7 @@ export const Hero: React.FC<HeroProps> = ({ hasSearched }) => {
 
         {/* Subtitle */}
         <p className="mt-3 text-sm text-[#8A8A94] sm:text-base md:text-lg max-w-xl mx-auto text-balance">
-          Búsqueda de alta precisión en más de 3.300 artículos con síntesis jurídica directa potenciada por IA.
+          Búsqueda de alta precisión en más de 7.500 artículos de la Constitución, códigos vigentes e históricos con síntesis jurídica por IA.
         </p>
       </div>
     </motion.section>
