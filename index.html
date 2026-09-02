@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arclight - Plataforma de operaciones de producto</title>
+<meta name="description" content="Arclight conecta tu roadmap, tus reuniones diarias y tus despliegues en un solo lugar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #faf9f7;
+    --bg-elevated: #ffffff;
+    --bg-inset: #f1efeb;
+    --text-primary: #16171a;
+    --text-secondary: #55575e;
+    --text-muted: #8b8d94;
+    --border: #e4e2dd;
+    --accent: #3457ff;
+    --accent-strong: #223dd6;
+    --accent-tint: #eaeeff;
+    --accent-contrast: #ffffff;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-full: 999px;
+    --shadow-soft: 0 1px 2px rgba(20,20,25,0.04), 0 12px 32px -16px rgba(20,20,25,0.12);
+    --shadow-lift: 0 1px 2px rgba(20,20,25,0.05), 0 24px 48px -20px rgba(20,20,25,0.20);
+    --max: 1200px;
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg: #0b0c0f;
+      --bg-elevated: #131418;
+      --bg-inset: #17181d;
+      --text-primary: #f3f3f4;
+      --text-secondary: #a9abb3;
+      --text-muted: #6d6f78;
+      --border: #24262c;
+      --accent: #6485ff;
+      --accent-strong: #7f9bff;
+      --accent-tint: #1a2140;
+      --accent-contrast: #0b0c0f;
+      --shadow-soft: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -16px rgba(0,0,0,0.5);
+      --shadow-lift: 0 1px 2px rgba(0,0,0,0.4), 0 24px 48px -20px rgba(0,0,0,0.6);
+    }
+  }
+
+  *{ box-sizing: border-box; margin: 0; padding: 0; }
+  html{ scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior: auto; } }
+
+  body{
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Manrope', system-ui, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3,h4{
+    font-family: 'Sora', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  img{ display:block; max-width: 100%; }
+  button{ font-family: inherit; cursor: pointer; }
+
+  .wrap{ max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+  section{ position: relative; }
+
+  /* ---------- Nav ---------- */
+  header{
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav{
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px;
+  }
+  .brand{ display: flex; align-items: center; gap: 10px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.05rem; }
+  .brand svg{ width: 28px; height: 28px; }
+  .nav-links{ display: flex; align-items: center; gap: 32px; }
+  .nav-links a{ font-size: 0.92rem; font-weight: 600; color: var(--text-secondary); transition: color .2s ease; white-space: nowrap; }
+  .nav-links a:hover{ color: var(--text-primary); }
+  .nav-cta{ display: flex; align-items: center; gap: 14px; }
+  .nav-toggle{ display: none; background: none; border: none; color: var(--text-primary); }
+  .nav-mobile{ display:none; }
+
+  @media (max-width: 860px){
+    .nav-links{ display: none; }
+    .nav-toggle{ display: flex; }
+    .nav-cta .btn-ghost{ display:none; }
+    header.open .nav-mobile{
+      display: flex; flex-direction: column; gap: 4px;
+      padding: 12px 24px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .nav-mobile a{ padding: 12px 4px; font-weight: 600; color: var(--text-secondary); border-bottom: 1px solid var(--border); }
+    .nav-mobile a:last-child{ border-bottom: none; }
+  }
+  .nav-mobile{ display: none; }
+  header.open .nav-mobile{ display: flex; }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 22px;
+    border-radius: var(--radius-full);
+    font-weight: 700; font-size: 0.92rem;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s ease, background .18s ease, border-color .18s ease;
+  }
+  .btn:active{ transform: scale(0.97); }
+  .btn-primary{ background: var(--accent); color: #fff; box-shadow: var(--shadow-soft); }
+  .btn-primary:hover{ background: var(--accent-strong); box-shadow: var(--shadow-lift); transform: translateY(-1px); }
+  .btn-ghost{ background: transparent; color: var(--text-primary); border-color: var(--border); }
+  .btn-ghost:hover{ border-color: var(--text-muted); }
+  .btn-block{ background: var(--bg-elevated); color: var(--text-primary); border-color: var(--border); }
+  .btn-block:hover{ border-color: var(--accent); color: var(--accent); }
+  .btn-lg{ padding: 15px 30px; font-size: 1rem; }
+
+  /* ---------- Hero ---------- */
+  .hero{ padding: 56px 0 80px; }
+  .hero-grid{
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .hero h1{
+    font-size: clamp(2.4rem, 4.4vw, 3.6rem);
+    line-height: 1.06;
+  }
+  .hero p.lead{
+    margin-top: 20px;
+    max-width: 46ch;
+    font-size: 1.08rem;
+    color: var(--text-secondary);
+  }
+  .hero-actions{ display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+  .hero-note{ margin-top: 18px; font-size: 0.85rem; color: var(--text-muted); }
+
+  .hero-visual{
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at 25% 15%, color-mix(in srgb, var(--accent) 55%, transparent), transparent 55%),
+      radial-gradient(circle at 80% 80%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 60%),
+      var(--bg-inset);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .hero-visual::before{
+    content: "";
+    position: absolute; inset: 0;
+    background-image: linear-gradient(color-mix(in srgb, var(--text-primary) 6%, transparent) 1px, transparent 1px),
+                       linear-gradient(90deg, color-mix(in srgb, var(--text-primary) 6%, transparent) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(circle at 50% 40%, black 40%, transparent 80%);
+  }
+  .hero-card{
+    position: absolute;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lift);
+    padding: 16px 18px;
+  }
+  .hero-card.c1{ top: 12%; left: 8%; width: 58%; }
+  .hero-card.c2{ bottom: 10%; right: 6%; width: 52%; }
+  .hero-card .row{ display:flex; align-items:center; gap: 10px; }
+  .hero-card .dot{ width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
+  .hero-card .label{ font-size: 0.8rem; font-weight: 700; color: var(--text-primary); }
+  .hero-card .sub{ font-size: 0.74rem; color: var(--text-muted); margin-top: 2px; }
+  .spark{ width: 100%; height: 34px; margin-top: 10px; }
+
+  @media (max-width: 900px){
+    .hero-grid{ grid-template-columns: 1fr; gap: 40px; }
+    .hero-visual{ aspect-ratio: 4/3; }
+  }
+
+  /* ---------- Logo wall ---------- */
+  .logos-section{ padding: 8px 0 64px; }
+  .logos-label{ text-align: center; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 26px; }
+  .logos-row{
+    display: flex; align-items: center; justify-content: center;
+    gap: clamp(24px, 5vw, 56px);
+    flex-wrap: wrap;
+    opacity: 0.75;
+  }
+  .logos-row img{ height: 22px; width: auto; filter: grayscale(1); opacity: 0.8; }
+
+  /* ---------- Section shell ---------- */
+  .section{ padding: 88px 0; border-top: 1px solid var(--border); }
+  .section-head{ max-width: 560px; margin-bottom: 48px; }
+  .section-head h2{ font-size: clamp(1.7rem, 3vw, 2.3rem); line-height: 1.15; }
+  .section-head p{ margin-top: 14px; color: var(--text-secondary); font-size: 1.02rem; }
+
+  /* ---------- Bento ---------- */
+  .bento{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: minmax(160px, auto);
+    gap: 18px;
+  }
+  .bento-cell{
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    padding: 26px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    position: relative; overflow: hidden;
+    background: var(--bg-elevated);
+  }
+  .bento-cell h3{ font-size: 1.15rem; }
+  .bento-cell p{ margin-top: 8px; color: var(--text-secondary); font-size: 0.92rem; max-width: 42ch; }
+  .bento-cell.big{ grid-column: span 2; grid-row: span 2; justify-content: space-between; }
+  .bento-cell.tint{
+    background: linear-gradient(160deg, var(--accent-tint), var(--bg-elevated) 70%);
+    border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  }
+  .bento-cell.dark{
+    background: linear-gradient(160deg, #10131c, #1a2036);
+    border-color: #2a3050;
+    color: #eef0ff;
+  }
+  .bento-cell.dark h3, .bento-cell.dark p{ color: inherit; }
+  .bento-cell.dark p{ opacity: 0.72; }
+  .bento-icon{
+    width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg-inset);
+    border: 1px solid var(--border);
+    margin-bottom: auto;
+  }
+  .bento-cell.tint .bento-icon, .bento-cell.dark .bento-icon{ background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.14); }
+  .bento-icon svg{ width: 20px; height: 20px; stroke: var(--accent); }
+  .bento-cell.dark .bento-icon svg{ stroke: #9db1ff; }
+  .mini-chart{ width: 100%; height: 64px; margin-top: 18px; }
+  .mini-logos{ display:flex; gap: 10px; margin-top: 16px; }
+  .mini-logos img{ width: 26px; height: 26px; border-radius: 8px; background: var(--bg-inset); padding: 5px; }
+
+  @media (max-width: 860px){
+    .bento{ grid-template-columns: 1fr; }
+    .bento-cell.big{ grid-column: span 1; grid-row: span 1; }
+  }
+
+  /* ---------- Timeline / how it works ---------- */
+  .timeline{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; position: relative; }
+  .timeline::before{
+    content: ""; position: absolute; top: 26px; left: 8%; right: 8%; height: 1px;
+    background: var(--border);
+  }
+  .step{ position: relative; padding: 0 20px 0 0; }
+  .step .num{ font-family: 'Sora', sans-serif; font-size: 2.1rem; font-weight: 800; color: var(--accent); background: var(--bg); display:inline-block; padding-right: 14px; }
+  .step h3{ margin-top: 18px; font-size: 1.15rem; }
+  .step p{ margin-top: 10px; color: var(--text-secondary); font-size: 0.95rem; max-width: 32ch; }
+
+  @media (max-width: 780px){
+    .timeline{ grid-template-columns: 1fr; gap: 36px; }
+    .timeline::before{ display: none; }
+  }
+
+  /* ---------- Testimonial ---------- */
+  .testimonial{
+    background: var(--bg-inset);
+    border-radius: 28px;
+    padding: clamp(36px, 6vw, 64px);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 28px;
+    align-items: center;
+  }
+  .testimonial .avatar{
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(150deg, var(--accent), var(--accent-strong));
+    display:flex; align-items:center; justify-content:center;
+    color: #fff; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.4rem;
+    flex: none;
+  }
+  .testimonial blockquote{ font-family: 'Sora', sans-serif; font-size: clamp(1.15rem, 2.2vw, 1.5rem); font-weight: 600; line-height: 1.35; }
+  .testimonial cite{ display:block; margin-top: 18px; font-style: normal; color: var(--text-secondary); font-size: 0.92rem; font-weight: 600; }
+  @media (max-width: 700px){ .testimonial{ grid-template-columns: 1fr; text-align: left; } }
+
+  /* ---------- Pricing ---------- */
+  .pricing-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .plan{
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 34px;
+    background: var(--bg-elevated);
+    display: flex; flex-direction: column;
+  }
+  .plan.featured{
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), var(--shadow-lift);
+    position: relative;
+  }
+  .plan-tag{
+    position: absolute; top: -13px; left: 34px;
+    background: var(--accent); color: #fff;
+    font-size: 0.72rem; font-weight: 700;
+    padding: 5px 12px; border-radius: var(--radius-full);
+    letter-spacing: 0.02em;
+  }
+  .plan h3{ font-size: 1.1rem; }
+  .plan .price{ margin-top: 14px; display: flex; align-items: baseline; gap: 6px; }
+  .plan .price .amount{ font-family: 'Sora', sans-serif; font-size: 2.6rem; font-weight: 800; }
+  .plan .price .period{ color: var(--text-muted); font-size: 0.9rem; }
+  .plan .desc{ margin-top: 10px; color: var(--text-secondary); font-size: 0.92rem; }
+  .plan ul{ list-style: none; margin-top: 26px; display: flex; flex-direction: column; gap: 13px; flex: 1; }
+  .plan li{ display: flex; gap: 10px; align-items: flex-start; font-size: 0.92rem; color: var(--text-primary); }
+  .plan li svg{ width: 18px; height: 18px; stroke: var(--accent); flex: none; margin-top: 1px; }
+  .plan .btn{ margin-top: 28px; width: 100%; }
+
+  @media (max-width: 720px){ .pricing-grid{ grid-template-columns: 1fr; } }
+
+  /* ---------- CTA banner ---------- */
+  .cta-banner{
+    border-radius: 28px;
+    background: linear-gradient(155deg, #10131c, #1c2340 60%, #223362);
+    color: #f5f6ff;
+    padding: clamp(48px, 7vw, 80px) clamp(24px, 6vw, 64px);
+    text-align: center;
+  }
+  .cta-banner h2{ color: #fff; font-size: clamp(1.8rem, 3.4vw, 2.6rem); max-width: 22ch; margin: 0 auto; }
+  .cta-banner p{ margin-top: 16px; color: rgba(245,246,255,0.72); max-width: 46ch; margin-left:auto; margin-right:auto; }
+  .cta-banner .hero-actions{ justify-content: center; margin-top: 30px; }
+  .cta-banner .btn-ghost{ border-color: rgba(255,255,255,0.28); color: #fff; }
+  .cta-banner .btn-ghost:hover{ border-color: rgba(255,255,255,0.6); }
+
+  /* ---------- Footer ---------- */
+  footer{ border-top: 1px solid var(--border); padding: 64px 0 40px; }
+  .footer-grid{ display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 32px; }
+  .footer-brand p{ margin-top: 14px; color: var(--text-secondary); font-size: 0.92rem; max-width: 30ch; }
+  .footer-col h4{ font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
+  .footer-col ul{ list-style: none; margin-top: 16px; display: flex; flex-direction: column; gap: 11px; }
+  .footer-col a{ font-size: 0.92rem; color: var(--text-secondary); transition: color .2s ease; }
+  .footer-col a:hover{ color: var(--text-primary); }
+  .footer-bottom{
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+  }
+  .footer-bottom p{ color: var(--text-muted); font-size: 0.85rem; }
+  @media (max-width: 780px){ .footer-grid{ grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px){ .footer-grid{ grid-template-columns: 1fr; } }
+
+  /* ---------- Reveal on scroll ---------- */
+  @media (prefers-reduced-motion: no-preference){
+    [data-reveal]{ opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+    [data-reveal].is-visible{ opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<header id="site-header">
+  <div class="wrap nav">
+    <a href="#top" class="brand">
+      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="28" height="28" rx="8" fill="var(--accent)"/>
+        <path d="M9 19L14 8L19 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M11 15H17" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Arclight
+    </a>
+    <nav class="nav-links">
+      <a href="#producto">Producto</a>
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#precios">Precios</a>
+      <a href="#opiniones">Clientes</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-ghost">Iniciar sesión</a>
+      <a href="#precios" class="btn btn-primary">Empezar gratis</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 7H20M4 12H20M4 17H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="nav-mobile wrap">
+    <a href="#producto">Producto</a>
+    <a href="#como-funciona">Cómo funciona</a>
+    <a href="#precios">Precios</a>
+    <a href="#opiniones">Clientes</a>
+    <a href="#precios">Empezar gratis</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>Un solo tablero para todo el ciclo de entrega.</h1>
+        <p class="lead">Arclight conecta tu roadmap, tus reuniones diarias y tus despliegues, así nada importante se pierde entre una reunión y otra.</p>
+        <div class="hero-actions">
+          <a href="#precios" class="btn btn-primary btn-lg">Empezar gratis</a>
+          <a href="#como-funciona" class="btn btn-ghost btn-lg">Ver demo de 2 minutos</a>
+        </div>
+        <p class="hero-note">Sin tarjeta de crédito. Cancelás cuando quieras.</p>
+      </div>
+      <div class="hero-visual" data-reveal>
+        <div class="hero-card c1">
+          <div class="row"><span class="dot"></span><span class="label">Sprint 14 · en curso</span></div>
+          <p class="sub">18 de 24 tareas completadas</p>
+          <svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none">
+            <polyline points="0,32 25,28 50,30 75,18 100,20 125,10 150,14 175,6 200,8" fill="none" stroke="#3457ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="hero-card c2">
+          <div class="row"><span class="dot" style="background:#22c55e"></span><span class="label">Despliegue a producción</span></div>
+          <p class="sub">Completado hace 4 minutos</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Logo wall -->
+  <section class="logos-section">
+    <div class="wrap">
+      <p class="logos-label">Usado por equipos de producto en</p>
+      <div class="logos-row">
+        <img src="https://cdn.simpleicons.org/github/8b8d94" alt="GitHub" loading="lazy">
+        <img src="https://cdn.simpleicons.org/slack/8b8d94" alt="Slack" loading="lazy">
+        <img src="https://cdn.simpleicons.org/figma/8b8d94" alt="Figma" loading="lazy">
+        <img src="https://cdn.simpleicons.org/notion/8b8d94" alt="Notion" loading="lazy">
+        <img src="https://cdn.simpleicons.org/linear/8b8d94" alt="Linear" loading="lazy">
+        <img src="https://cdn.simpleicons.org/vercel/8b8d94" alt="Vercel" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- Features / Bento -->
+  <section class="section" id="producto">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2>Todo lo que hoy vive en cinco pestañas distintas, en una sola.</h2>
+        <p>Arclight reemplaza la mezcla de hojas de cálculo, canales de chat y tableros sueltos con un único lugar de trabajo.</p>
+      </div>
+      <div class="bento">
+        <div class="bento-cell big tint" data-reveal>
+          <div class="bento-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12h4l3-8 4 16 3-8h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div>
+            <h3>Roadmap en tiempo real</h3>
+            <p>Cada cambio de prioridad se refleja al instante para todo el equipo, sin exportar ni sincronizar nada a mano.</p>
+            <svg class="mini-chart" viewBox="0 0 320 64" preserveAspectRatio="none">
+              <polyline points="0,50 40,44 80,48 120,30 160,34 200,16 240,22 280,8 320,14" fill="none" stroke="#3457ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="bento-cell" data-reveal>
+          <div class="bento-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 6v6l4 2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke-width="2"/></svg></div>
+          <h3>Standups automáticos</h3>
+          <p>Arclight arma el resumen diario a partir de lo que cada persona ya movió, sin pedirle nada extra.</p>
+        </div>
+        <div class="bento-cell dark" data-reveal>
+          <div class="bento-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Seguimiento de despliegues</h3>
+          <p>Cada release queda unida a las tareas que la componen, con su estado y quién la aprobó.</p>
+        </div>
+        <div class="bento-cell" data-reveal>
+          <div class="bento-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 17V7a2 2 0 012-2h5l2 2h5a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Conectado con tus herramientas</h3>
+          <p>Sincroniza en ambos sentidos con lo que tu equipo ya usa a diario.</p>
+          <div class="mini-logos">
+            <img src="https://cdn.simpleicons.org/github/3457ff" alt="GitHub">
+            <img src="https://cdn.simpleicons.org/slack/3457ff" alt="Slack">
+            <img src="https://cdn.simpleicons.org/figma/3457ff" alt="Figma">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section" id="como-funciona">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2>De la primera conexión al primer release, en una tarde.</h2>
+        <p>No hace falta migrar nada de golpe. Arclight se acomoda al proceso que ya tenés.</p>
+      </div>
+      <div class="timeline">
+        <div class="step" data-reveal>
+          <span class="num">01</span>
+          <h3>Conectá tus herramientas</h3>
+          <p>Vinculá tu repositorio y tu chat de equipo en un par de clics, sin tocar configuración.</p>
+        </div>
+        <div class="step" data-reveal>
+          <span class="num">02</span>
+          <h3>Definí tu ritmo</h3>
+          <p>Elegí cómo se agrupan los sprints y quién revisa qué antes de que algo avance.</p>
+        </div>
+        <div class="step" data-reveal>
+          <span class="num">03</span>
+          <h3>Mirá cómo se sincroniza</h3>
+          <p>El roadmap, los standups y los despliegues empiezan a moverse solos, en el mismo lugar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonial -->
+  <section class="section" id="opiniones">
+    <div class="wrap">
+      <div class="testimonial" data-reveal>
+        <div class="avatar">PR</div>
+        <div>
+          <blockquote>"Dejamos de perder media hora de cada reunión en explicar en qué estaba cada uno. Ahora eso ya está ahí, listo."</blockquote>
+          <cite>Priya Raman - Jefa de Operaciones, Fenwick Studio</cite>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section" id="precios">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2>Un precio simple, sin sorpresas por usuario extra.</h2>
+        <p>Empezá gratis y pasate al plan pago cuando tu equipo lo necesite.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="plan" data-reveal>
+          <h3>Equipo</h3>
+          <div class="price"><span class="amount">$0</span><span class="period">/ mes, hasta 5 personas</span></div>
+          <p class="desc">Para equipos chicos que recién arman su primer flujo de trabajo.</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Roadmap y tareas ilimitadas</li>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>1 integración activa</li>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Historial de 30 días</li>
+          </ul>
+          <a href="#" class="btn btn-block">Empezar gratis</a>
+        </div>
+        <div class="plan featured" data-reveal>
+          <span class="plan-tag">Más elegido</span>
+          <h3>Compañía</h3>
+          <div class="price"><span class="amount">$14</span><span class="period">/ persona / mes</span></div>
+          <p class="desc">Para equipos que ya dependen de Arclight todos los días.</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Todo lo del plan Equipo</li>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Integraciones ilimitadas</li>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Permisos por rol</li>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Soporte prioritario</li>
+          </ul>
+          <a href="#" class="btn btn-primary">Empezar gratis</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA banner -->
+  <section class="section" style="border-top:none; padding-top:0;">
+    <div class="wrap">
+      <div class="cta-banner" data-reveal>
+        <h2>Tu próximo sprint puede empezar sin la planilla de siempre.</h2>
+        <p>Migrá tu roadmap actual en minutos y probá Arclight con tu equipo real, no con datos de ejemplo.</p>
+        <div class="hero-actions">
+          <a href="#precios" class="btn btn-primary btn-lg">Empezar gratis</a>
+          <a href="#" class="btn btn-ghost btn-lg">Hablar con ventas</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#top" class="brand">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="28" height="28" rx="8" fill="var(--accent)"/>
+            <path d="M9 19L14 8L19 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M11 15H17" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Arclight
+        </a>
+        <p>El lugar donde tu roadmap, tus reuniones y tus despliegues finalmente se hablan entre sí.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Producto</h4>
+        <ul>
+          <li><a href="#producto">Funciones</a></li>
+          <li><a href="#precios">Precios</a></li>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#">Integraciones</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Compañía</h4>
+        <ul>
+          <li><a href="#">Nosotros</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Empleo</a></li>
+          <li><a href="#">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacidad</a></li>
+          <li><a href="#">Términos</a></li>
+          <li><a href="#">Seguridad</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Arclight. Todos los derechos reservados.</p>
+      <p>hola@arclight.app</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav toggle
+  const header = document.getElementById('site-header');
+  const navToggle = document.getElementById('nav-toggle');
+  navToggle.addEventListener('click', () => {
+    const isOpen = header.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', String(isOpen));
+  });
+  document.querySelectorAll('.nav-mobile a').forEach(a => {
+    a.addEventListener('click', () => {
+      header.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // Scroll reveal (skipped entirely if user prefers reduced motion)
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!prefersReducedMotion && 'IntersectionObserver' in window) {
+    const revealEls = document.querySelectorAll('[data-reveal]');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+    revealEls.forEach(el => observer.observe(el));
+  } else {
+    document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('is-visible'));
+  }
+</script>
+
+</body>
+</html>
