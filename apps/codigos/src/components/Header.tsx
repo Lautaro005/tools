@@ -6,14 +6,13 @@ interface HeaderProps {
   onOpenSettings: () => void;
   hasApiKey: boolean;
   totalArticles: number;
-  onReset: () => void;
+  onReset?: () => void; // kept for API compatibility; no longer used in render
 }
 
 export const Header: React.FC<HeaderProps> = ({
   onOpenSettings,
   hasApiKey,
   totalArticles,
-  onReset
 }) => {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[#1E1E24] bg-[#0C0C0E]/90 backdrop-blur-md transition-colors">
@@ -21,11 +20,11 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Left Side: App Branding */}
         <div className="flex items-center gap-3 sm:gap-4">
 
-          {/* Logo / Wordmark */}
-          <button
-            onClick={onReset}
+          {/* Logo / Wordmark — links to tools home */}
+          <a
+            href="../../index.html"
             className="group flex items-center gap-2.5 text-left transition-opacity hover:opacity-90"
-            title="Reiniciar búsqueda"
+            title="Volver a la suite de herramientas"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#D4A843]/30 bg-[#D4A843]/10 text-[#D4A843] transition-colors group-hover:border-[#D4A843]/60 group-hover:bg-[#D4A843]/20">
               <BookOpen size={16} />
@@ -38,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
                 normativa ia
               </span>
             </div>
-          </button>
+          </a>
         </div>
 
         {/* Right side: article count + Home link + Settings */}
