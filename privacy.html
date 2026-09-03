@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de Privacidad · Tools Suite</title>
+  <meta name="description" content="Política de privacidad y protección de datos de Tools Suite. Transparencia sobre almacenamiento local en cliente, APIs de terceros y ausencia de rastreadores." />
+  <link rel="canonical" href="https://lautaro005.github.io/tools/privacy.html" />
+  <link rel="source" href="https://github.com/Lautaro005/tools" />
+  <link rel="help" href="https://github.com/Lautaro005/tools" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4A843' stroke-width='2'><path d='m12 3-8 4v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V7l-8-4z'/><path d='m9 12 2 2 4-4'/></svg>" />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Política de Privacidad · Tools Suite" />
+  <meta property="og:description" content="Política de privacidad y protección de datos de Tools Suite. Transparencia sobre almacenamiento local en cliente, APIs de terceros y ausencia de rastreadores." />
+  <meta property="og:url" content="https://lautaro005.github.io/tools/privacy.html" />
+  <meta property="og:image" content="https://lautaro005.github.io/tools/assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Tools Suite - Política de Privacidad y Protección de Datos" />
+  <meta property="og:locale" content="es_AR" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Política de Privacidad · Tools Suite" />
+  <meta name="twitter:description" content="Política de privacidad y protección de datos de Tools Suite. Transparencia y almacenamiento local en el navegador." />
+  <meta name="twitter:image" content="https://lautaro005.github.io/tools/assets/og-image.png" />
+  <meta name="twitter:image:alt" content="Tools Suite - Política de Privacidad" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Política de Privacidad · Tools Suite",
+    "description": "Política de privacidad y tratamiento de datos de la suite de herramientas Tools Suite (OpenMaus).",
+    "url": "https://lautaro005.github.io/tools/privacy.html",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Tools Suite",
+      "url": "https://lautaro005.github.io/tools/"
+    },
+    "inLanguage": "es"
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #0C0C0E;
+      --surface: #131316;
+      --surface-hover: #18181D;
+      --border: #1E1E24;
+      --border-accent: rgba(212, 168, 67, 0.35);
+      --text-primary: #F2F2F0;
+      --text-secondary: #8A8A94;
+      --accent: #D4A843;
+      --accent-dim: rgba(212, 168, 67, 0.12);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.7;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .ambient-glow {
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 380px;
+      background: radial-gradient(ellipse at center, rgba(212, 168, 67, 0.08) 0%, rgba(12, 12, 14, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(12, 12, 14, 0.85);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: 64px;
+      display: flex;
+      align-items: center;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-title span {
+      color: var(--accent);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 13px;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .back-btn:hover {
+      border-color: var(--border-accent);
+      color: var(--accent);
+      background: var(--surface-hover);
+    }
+
+    main {
+      flex: 1;
+      padding: 60px 0 80px;
+    }
+
+    .page-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      background: var(--accent-dim);
+      border: 1px solid var(--border-accent);
+      border-radius: 20px;
+      font-size: 12px;
+      font-family: 'Geist Mono', monospace;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+      color: #FFF;
+    }
+
+    .last-updated {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .policy-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .policy-card h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .policy-card h2 span {
+      color: var(--accent);
+      font-family: 'Geist Mono', monospace;
+      font-size: 15px;
+    }
+
+    .policy-card p {
+      color: #B5B5BE;
+      font-size: 14.5px;
+      margin-bottom: 14px;
+    }
+
+    .policy-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .policy-card ul {
+      margin: 12px 0 16px 24px;
+      color: #B5B5BE;
+      font-size: 14px;
+    }
+
+    .policy-card li {
+      margin-bottom: 8px;
+    }
+
+    .policy-card strong {
+      color: var(--text-primary);
+    }
+
+    .policy-card code {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      color: var(--accent);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      font-size: 13px;
+      color: var(--text-secondary);
+      background: var(--bg);
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <a href="./index.html" class="brand">
+          <div class="brand-icon" role="img" aria-label="Logo rayo Tools Suite">⚡</div>
+          <div class="brand-title">Tools<span>.</span>io</div>
+        </a>
+        <a href="./index.html" class="back-btn">
+          <span>←</span> Volver a Tools Suite
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="page-badge">
+        <span role="img" aria-label="Escudo de seguridad">🛡️</span> Transparencia y Privacidad
+      </div>
+      <h1>Política de Privacidad</h1>
+      <div class="last-updated">Última actualización: Septiembre de 2026 · Tools Suite (OpenMaus)</div>
+
+      <div class="policy-card">
+        <h2><span>01.</span> Principio Fundamental: Privacidad por Diseño</h2>
+        <p>
+          En <strong>Tools Suite</strong> diseñamos aplicaciones web estáticas y autónomas que operan directamente en el navegador del usuario. 
+          <strong>No recopilamos, no vendemos, no almacenamos en servidores propios ni transferimos información de identificación personal ni hábitos de navegación.</strong>
+        </p>
+        <p>
+          Las aplicaciones de la suite no requieren registro de cuenta ni inicio de sesión para sus funciones estándar, garantizando la soberanía de los datos en tu dispositivo local.
+        </p>
+      </div>
+
+      <div class="policy-card">
+        <h2><span>02.</span> Almacenamiento Local (LocalStorage)</h2>
+        <p>
+          Las utilidades de la suite pueden almacenar preferencias y datos operativos estrictamente necesarios en el <code>localStorage</code> de tu navegador:
+        </p>
+        <ul>
+          <li><strong>Códigos AR:</strong> Si decides utilizar la síntesis por Inteligencia Artificial, tu clave de API de OpenRouter (<code>codigos_ar_openrouter_key</code>), el modelo seleccionado (<code>codigos_ar_openrouter_model</code>) y tus modelos guardados (<code>codigos_ar_saved_models</code>) se persisten exclusivamente en tu navegador. Jamás transitan ni se almacenan en servidores nuestros.</li>
+          <li><strong>Citas APA:</strong> La lista de referencias guardadas (<code>citas_apa_saved_bibliography</code>) se guarda localmente en tu equipo para que puedas consultar tu bibliografía entre sesiones.</li>
+        </ul>
+        <p>
+          Puedes eliminar estos datos en cualquier momento limpiando la memoria caché o los datos del sitio desde la configuración de tu navegador.
+        </p>
+      </div>
+
+      <div class="policy-card">
+        <h2><span>03.</span> Interacción con Servicios de Terceros</h2>
+        <p>
+          Algunas funciones opcionales interactúan con servicios externos para cumplir con su propósito:
+        </p>
+        <ul>
+          <li><strong>OpenRouter API:</strong> Códigos AR realiza solicitudes directas desde tu cliente hacia los servidores de OpenRouter exclusivamente cuando ejecutas una síntesis jurídica con tu propia clave. La consulta y los artículos normativos seleccionados se envían bajo los términos y la política de privacidad de OpenRouter y del modelo que hayas configurado.</li>
+          <li><strong>Microlink y AllOrigins (Extracción de Metadatos en Citas APA):</strong> Al generar una cita a partir de un enlace web, la aplicación consulta servicios públicos de extracción de metadatos (Microlink API y proxies CORS como AllOrigins) para obtener el título, autor y fecha pública del sitio analizado. No se envía información personal del usuario.</li>
+          <li><strong>FinanzAR:</strong> Aplicación externa enlazada en el catálogo y alojada en Vercel, regida por sus propias condiciones y políticas de servicio.</li>
+        </ul>
+      </div>
+
+      <div class="policy-card">
+        <h2><span>04.</span> Cookies y Rastreadores</h2>
+        <p>
+          Tools Suite <strong>no utiliza cookies de rastreo publicitario, cookies de perfilado ni herramientas invasivas de analítica de terceros</strong>. No realizamos seguimiento de tu identidad ni cruzamos datos con redes publicitarias.
+        </p>
+      </div>
+
+      <div class="policy-card">
+        <h2><span>05.</span> Código Abierto y Auditoría</h2>
+        <p>
+          Creemos en la transparencia técnica verificable. El código fuente de la suite y sus aplicaciones estáticas está publicado y disponible para auditoría pública en el repositorio de GitHub de <a href="https://github.com/Lautaro005/tools" target="_blank" rel="noreferrer" style="color: var(--accent); text-decoration: underline;">Lautaro005/tools</a>.
+        </p>
+      </div>
+
+      <div class="policy-card">
+        <h2><span>06.</span> Contacto y Consultas</h2>
+        <p>
+          Si tienes consultas, sugerencias o deseas reportar alguna inquietud respecto a la privacidad o seguridad de estas herramientas, puedes abrir un issue directamente en nuestro repositorio de GitHub.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div>© 2025 Tools Suite. Desarrollado por el equipo de OpenMaus.</div>
+        <div class="footer-links">
+          <a href="https://github.com/Lautaro005/tools" target="_blank" rel="noreferrer">Código fuente (GitHub)</a>
+          <a href="./index.html">Suite de Herramientas</a>
+          <a href="./privacy.html" style="color: var(--accent);">Política de Privacidad</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

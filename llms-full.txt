@@ -1,0 +1,32 @@
+# Tools Suite — OpenMaus (Documentación Completa)
+
+Este archivo contiene la especificación extendida de Tools Suite y sus aplicaciones integradas para modelos de lenguaje (LLMs) y agentes inteligentes.
+
+## Arquitectura y Principios
+- **Despliegue:** GitHub Pages en `https://lautaro005.github.io/tools/`.
+- **Privacidad por diseño:** No se recolectan datos personales en servidores propios. Todas las credenciales (por ejemplo, API keys de OpenRouter) se almacenan exclusivamente en el `localStorage` del navegador del usuario.
+- **Sin backend propietario:** Cada aplicación opera de forma estática o consumiendo APIs públicas / provistas por el usuario.
+
+## 1. Códigos AR (Normativa Legal Argentina)
+- **Ruta:** `/apps/codigos/`
+- **Tecnología:** React 19, TypeScript, Vite, Tailwind CSS, Framer Motion, Lucide Icons.
+- **Índice normativo:** 7.576 artículos indexados en `data/articles.min.json`.
+  - Constitución de la Nación Argentina (CNA, 130 artículos incluyendo 14 bis).
+  - Código Civil y Comercial de la Nación (CCyC, 2.671 artículos).
+  - Código Penal de la Nación (CPen, 316 artículos).
+  - Código de Comercio derogado (CCom, 1.450 artículos de referencia histórica).
+  - Código Civil derogado de Vélez Sarsfield (CCVS, 4.051 artículos de referencia histórica).
+- **Funcionalidades:** Búsqueda en memoria con normalización de acentos, descarte de stopwords, scoring por relevancia e intención, filtros interactivos por cuerpo normativo, y síntesis jurídica opcional mediante OpenRouter.
+
+## 2. Citas APA (Generador Bibliográfico APA 7)
+- **Ruta:** `/apps/citas/`
+- **Tecnología:** HTML5, CSS moderno con variables, JavaScript ES2022 nativo.
+- **Extracción de metadatos:**
+  1. API de Microlink (`https://api.microlink.io`) para extracción de Open Graph, Schema.org y metadatos estándar.
+  2. Fallback mediante proxy CORS AllOrigins y parsing DOM HTML nativo.
+  3. Fallback de heurística de URL para inferir autor corporativo o dominio y fecha en slug.
+- **Formateo:** Normas APA 7ma edición para páginas web con o sin autor/fecha. Citas parentéticas `(Autor, Año)` y narrativas `Autor (Año)`. Exportación a texto plano, HTML enriquecido con cursivas, formato TXT y Markdown.
+
+## 3. FinanzAR
+- **Ruta externa:** `https://finanzar-delta.vercel.app`
+- **Propósito:** Gestión ágil de presupuestos, categorías de gastos y seguimiento de finanzas personales.

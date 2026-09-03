@@ -1,0 +1,16 @@
+# Tools Suite — OpenMaus
+
+> Catálogo centralizado de herramientas digitales de alta productividad, análisis normativo argentino con inteligencia artificial y generador de referencias bibliográficas académicas APA 7ma edición.
+
+Suite de aplicaciones web estáticas y autónomas desarrolladas por el equipo de OpenMaus, diseñadas para operar directamente en el navegador del usuario con privacidad por diseño y rendimiento inmediato.
+
+## Aplicaciones Principales
+
+- [Códigos AR](https://lautaro005.github.io/tools/apps/codigos/): Buscador ágil e inteligente de legislación argentina. Indexa más de 7.500 artículos de la Constitución Nacional (CNA), Código Civil y Comercial de la Nación (CCyC), Código Penal de la Nación (CPen), Código de Comercio derogado (CCom) y Código Civil de Vélez Sarsfield derogado (CCVS). Permite búsqueda por intención, filtros normativos y generación opcional de resúmenes jurídicos mediante la API de OpenRouter configurada localmente en el cliente.
+- [Citas APA](https://lautaro005.github.io/tools/apps/citas/): Generador instantáneo de citas y referencias bibliográficas según las normas APA 7ma edición. Extrae metadatos automáticamente a partir de URLs o páginas web con múltiples niveles de fallback (Microlink API, DOMParser vía AllOrigins y heurística de URL), editor en vivo, copiado en texto plano y enriquecido con cursivas, citas en el texto parentéticas y narrativas, y gestor de bibliografía en localStorage.
+- [FinanzAR](https://finanzar-delta.vercel.app): Aplicación web de gestión de finanzas personales, presupuestos y control de ingresos y gastos.
+
+## Información Técnica y Privacidad
+
+- [Política de Privacidad](https://lautaro005.github.io/tools/privacy.html): Declaración de privacidad, almacenamiento local en cliente, ausencia de telemetría y uso de APIs externas.
+- [Código Fuente en GitHub](https://github.com/Lautaro005/tools): Repositorio público de la suite de herramientas.

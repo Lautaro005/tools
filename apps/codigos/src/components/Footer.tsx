@@ -10,6 +10,31 @@ export const Footer: React.FC = () => {
           <span>Plataforma de búsqueda y análisis normativo argentino</span>
         </div>
 
+        <div className="flex flex-wrap items-center gap-4 text-[11.5px]">
+          <a
+            href="https://github.com/Lautaro005/tools/tree/main/apps/codigos"
+            target="_blank"
+            rel="noreferrer"
+            className="transition-colors hover:text-[#D4A843]"
+          >
+            Código fuente (GitHub)
+          </a>
+          <span>·</span>
+          <a
+            href="../../index.html"
+            className="transition-colors hover:text-[#D4A843]"
+          >
+            Suite de Herramientas
+          </a>
+          <span>·</span>
+          <a
+            href="../../privacy.html"
+            className="transition-colors hover:text-[#D4A843]"
+          >
+            Política de Privacidad
+          </a>
+        </div>
+
         <div className="text-[11px] text-[#8A8A94]/70">
           OpenMaus Tools Suite · 2025
         </div>
@@ -17,3 +42,4 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
+
