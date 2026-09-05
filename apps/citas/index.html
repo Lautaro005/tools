@@ -109,13 +109,21 @@
       z-index: 0;
     }
 
+    /* Standard Suite Container for Header and Footer */
     .container {
       width: 100%;
-      max-width: 1040px;
+      max-width: 1180px;
       margin: 0 auto;
       padding: 0 24px;
       position: relative;
       z-index: 1;
+    }
+
+    /* Content container for Citas APA */
+    .container-content {
+      width: 100%;
+      max-width: 1040px;
+      margin: 0 auto;
     }
 
     /* Header */
@@ -1034,7 +1042,8 @@
   <!-- Hero -->
   <section class="hero">
     <div class="container">
-      <div class="hero-pill">
+      <div class="container-content">
+        <div class="hero-pill">
         <span class="hero-pill-dot"></span>
         Generador Bibliográfico Automático · Normas APA 7ma Edición
       </div>
@@ -1042,13 +1051,15 @@
       <p class="hero-subtitle">
         Pegá la URL de cualquier artículo, noticia o sitio web para extraer automáticamente los metadatos y armar la referencia normalizada lista para tu trabajo.
       </p>
+      </div>
     </div>
   </section>
 
   <!-- Generator -->
   <main class="generator-section">
     <div class="container">
-      <!-- Input Card -->
+      <div class="container-content">
+        <!-- Input Card -->
       <div class="url-input-card">
         <label for="urlInput" class="url-input-label">Ingresá la URL del artículo o sitio web</label>
 
@@ -1283,6 +1294,7 @@
           </div>
         </div>
       </div>
+      </div>
     </div>
   </main>
 
@@ -1293,7 +1305,7 @@
   <footer>
     <div class="container">
       <div class="footer-inner">
-        <div>© 2025 Tools Suite. Desarrollado por el equipo de OpenMaus.</div>
+        <div>© 2025 Tools Suite.</div>
         <div class="footer-links">
           <a href="https://github.com/Lautaro005/tools/tree/main/apps/citas" target="_blank" rel="noreferrer">Código fuente (GitHub)</a>
           <a href="../../index.html">Suite de Herramientas</a>
@@ -2066,7 +2078,7 @@
 
       const content = "REFERENCIAS BIBLIOGRÁFICAS (NORMAS APA 7MA EDICIÓN)\n\n" +
                       list.map(item => item.plain).join('\n\n') +
-                      "\n\n---\nGenerado con Citas APA - Tools Suite (OpenMaus)";
+                      "\n\n---\nGenerado con Citas APA - Tools Suite";
 
       const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
       const a = document.createElement('a');
