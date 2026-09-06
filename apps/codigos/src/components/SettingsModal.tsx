@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, Sliders, ExternalLink, Plus, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, Check, Sliders, ExternalLink, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Settings } from '../types';
 
 interface SettingsModalProps {
@@ -21,17 +21,27 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [model, setModel] = useState(settings.model);
   const [summaryEnabled, setSummaryEnabled] = useState(settings.summaryEnabled);
   const [saved, setSaved] = useState(false);
-  const [savedModels, setSavedModels] = useState<string[]>(() => {
+  const [savedModels, setSavedModels] = useState<string[]>([]);
+
+  // Load saved models from localStorage whenever modal opens or settings change
+  useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY_SAVED_MODELS);
-      return raw ? JSON.parse(raw) : [
+      const parsed = raw ? JSON.parse(raw) : [
         'google/gemini-2.0-flash-001',
         'meta-llama/llama-3.3-70b-instruct'
       ];
+      setSavedModels(parsed);
+      // If current model is not set or not in saved models, pick first available if exists
+      if (settings.model) {
+        setModel(settings.model);
+      } else if (parsed.length > 0) {
+        setModel(parsed[0]);
+      }
     } catch {
-      return ['google/gemini-2.0-flash-001'];
+      setSavedModels(['google/gemini-2.0-flash-001']);
     }
-  });
+  }, [isOpen, settings.model]);
 
   useEffect(() => {
     setModel(settings.model);
@@ -49,32 +59,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
-
-  const handleAddSavedModel = (e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
-    const trimmed = model.trim();
-    if (!trimmed) return;
-    if (!savedModels.includes(trimmed)) {
-      const updated = [...savedModels, trimmed];
-      setSavedModels(updated);
-      try {
-        localStorage.setItem(STORAGE_KEY_SAVED_MODELS, JSON.stringify(updated));
-      } catch (err) {
-        console.error('Error saving model to localStorage:', err);
-      }
-    }
-  };
-
-  const handleRemoveSavedModel = (modelToRemove: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const updated = savedModels.filter(m => m !== modelToRemove);
-    setSavedModels(updated);
-    try {
-      localStorage.setItem(STORAGE_KEY_SAVED_MODELS, JSON.stringify(updated));
-    } catch (err) {
-      console.error('Error removing model from localStorage:', err);
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,7 +107,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold text-[#F2F2F0]">Ajustes de Códigos AR</h2>
-                  <p className="text-xs text-[#8A8A94]">Modelos favoritos y preferencias de IA</p>
+                  <p className="text-xs text-[#8A8A94]">Modelos de IA y síntesis jurídica</p>
                 </div>
               </div>
               <button
@@ -171,70 +155,70 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
               </div>
 
-              {/* Model selection & favorites */}
+              {/* Model selection from saved models */}
               <div>
-                <label className="block text-xs font-medium uppercase tracking-wider text-[#8A8A94] mb-1.5">
-                  Modelo de IA Activo (OpenRouter)
-                </label>
-                <div className="flex items-center gap-2">
-                  <div className="relative flex-1">
-                    <input
-                      type="text"
-                      value={model}
-                      onChange={(e) => setModel(e.target.value)}
-                      placeholder="ej: google/gemini-2.0-flash-001"
-                      className="w-full rounded-lg border border-[#1E1E24] bg-[#0C0C0E] px-3.5 py-2.5 text-sm font-mono text-[#F2F2F0] placeholder-[#8A8A94]/50 focus:border-[#D4A843] focus:outline-none transition-colors"
-                      required
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleAddSavedModel}
-                    disabled={!model.trim() || savedModels.includes(model.trim())}
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#1E1E24] bg-[#0C0C0E] text-[#D4A843] transition-colors hover:border-[#D4A843]/50 hover:bg-[#D4A843]/10 disabled:opacity-40 disabled:cursor-not-allowed"
-                    title={savedModels.includes(model.trim()) ? 'Modelo ya guardado en favoritos' : 'Agregar a favoritos (+)'}
-                    aria-label="Guardar modelo favorito"
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-medium uppercase tracking-wider text-[#8A8A94]">
+                    Modelo de IA Activo
+                  </label>
+                  <a
+                    href="../../index.html"
+                    className="inline-flex items-center gap-1 text-[11px] text-[#D4A843] hover:underline"
+                    title="Administrar modelos en el Inicio de Tools Suite"
                   >
-                    <Plus size={18} />
-                  </button>
+                    <span>Administrar en Inicio</span>
+                    <ExternalLink size={10} />
+                  </a>
                 </div>
 
-                {/* Favorite Models List */}
-                <div className="mt-3">
-                  <span className="block text-[11px] font-medium text-[#8A8A94] mb-1.5">
-                    Modelos favoritos guardados:
-                  </span>
-                  {savedModels.length > 0 ? (
-                    <div className="flex flex-wrap gap-1.5">
-                      {savedModels.map((m) => (
+                {savedModels.length > 0 ? (
+                  <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+                    {savedModels.map((m) => {
+                      const isSelected = model === m;
+                      return (
                         <div
                           key={m}
                           onClick={() => setModel(m)}
-                          className={`group flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-mono cursor-pointer transition-colors ${
-                            model === m
-                              ? 'border border-[#D4A843]/50 bg-[#D4A843]/15 text-[#D4A843]'
+                          className={`flex items-center justify-between rounded-lg px-3 py-2 text-xs font-mono cursor-pointer transition-colors ${
+                            isSelected
+                              ? 'border border-[#D4A843]/60 bg-[#D4A843]/15 text-[#D4A843] font-semibold'
                               : 'border border-[#1E1E24] bg-[#0C0C0E] text-[#8A8A94] hover:text-[#F2F2F0] hover:border-[#D4A843]/30'
                           }`}
-                          title={`Seleccionar ${m}`}
                         >
-                          <span className="max-w-[200px] truncate">{m}</span>
-                          <button
-                            type="button"
-                            onClick={(e) => handleRemoveSavedModel(m, e)}
-                            className="opacity-50 hover:opacity-100 hover:text-rose-400 transition-opacity p-0.5"
-                            title="Eliminar de favoritos"
-                          >
-                            <X size={12} />
-                          </button>
+                          <div className="flex items-center gap-2 truncate pr-2">
+                            <span
+                              className={`h-2 w-2 rounded-full shrink-0 ${
+                                isSelected ? 'bg-[#D4A843]' : 'bg-[#1E1E24]'
+                              }`}
+                            />
+                            <span className="truncate">{m}</span>
+                          </div>
+                          {isSelected && (
+                            <span className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-[#D4A843]/20 text-[#D4A843] shrink-0">
+                              Activo
+                            </span>
+                          )}
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-[11px] text-[#8A8A94]">
-                      Escribí un modelo y presioná <span className="text-[#D4A843] font-semibold">+</span> para guardarlo en favoritos.
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="rounded-lg border border-dashed border-[#1E1E24] bg-[#0C0C0E] p-4 text-center">
+                    <p className="text-xs text-[#8A8A94] mb-2">
+                      No tenés modelos guardados aún.
                     </p>
-                  )}
-                </div>
+                    <a
+                      href="../../index.html"
+                      className="inline-flex items-center gap-1 text-xs text-[#D4A843] hover:underline font-medium"
+                    >
+                      <span>Agregar modelos en los Ajustes del Inicio</span>
+                      <ExternalLink size={12} />
+                    </a>
+                  </div>
+                )}
+                <p className="text-[11px] text-[#8A8A94]/80 mt-2 leading-relaxed">
+                  Para agregar nuevos modelos o remover existentes, usá los Ajustes de la página principal.
+                </p>
               </div>
 
               {/* API Key Status Notice */}
@@ -258,7 +242,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     className="inline-flex items-center gap-1 text-[#D4A843] hover:underline shrink-0"
                     title="Configurar clave en el Inicio de Tools Suite"
                   >
-                    <span>{hasApiKey ? 'Administrar en Inicio' : 'Configurar en Inicio'}</span>
+                    <span>{hasApiKey ? 'Gestionar en Inicio' : 'Configurar en Inicio'}</span>
                     <ExternalLink size={11} />
                   </a>
                 </div>

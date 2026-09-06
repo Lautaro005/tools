@@ -162,6 +162,44 @@ export const Header: React.FC<HeaderProps> = ({
                       </div>
                     </a>
 
+                    {/* Transfer (AirDrop & QR) */}
+                    <a
+                      href="../transfer/index.html"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-[#1E1E24] group"
+                      role="menuitem"
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#1E1E24] bg-[#0C0C0E] text-base group-hover:border-[#D4A843]/30">
+                        📡
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <div className="text-xs font-semibold text-[#F2F2F0] group-hover:text-[#D4A843] transition-colors">
+                          Transfer
+                        </div>
+                        <div className="text-[11px] text-[#8A8A94] truncate">
+                          AirDrop local & QR
+                        </div>
+                      </div>
+                    </a>
+
+                    {/* Quitar Fondo */}
+                    <a
+                      href="../fondo/index.html"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-[#1E1E24] group"
+                      role="menuitem"
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#1E1E24] bg-[#0C0C0E] text-base group-hover:border-[#D4A843]/30">
+                        🪄
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <div className="text-xs font-semibold text-[#F2F2F0] group-hover:text-[#D4A843] transition-colors">
+                          Quitar Fondo
+                        </div>
+                        <div className="text-[11px] text-[#8A8A94] truncate">
+                          PNG transparente con IA
+                        </div>
+                      </div>
+                    </a>
+
                     {/* FinanzAR (External) */}
                     <a
                       href="https://finanzar-delta.vercel.app"

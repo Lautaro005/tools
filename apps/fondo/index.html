@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quitar Fondo · Eliminador de Fondos PNG Transparente · Tools Suite</title>
+  <meta name="description" content="Eliminá el fondo de cualquier foto o imagen 100% en tu navegador y descargá un archivo PNG transparente real con canal alfa sin patrones cuadriculados falsos." />
+  <link rel="canonical" href="https://lautaro005.github.io/tools/apps/fondo/" />
+  <link rel="source" href="https://github.com/Lautaro005/tools" />
+  <link rel="help" href="https://github.com/Lautaro005/tools" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4A843' stroke-width='2'><path d='m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z'/><path d='m14 7 3 3'/><path d='M5 6v4'/><path d='M19 14v4'/><path d='M10 2v2'/><path d='M7 8H3'/><path d='M21 16h-4'/><path d='M11 3H9'/></svg>" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Quitar Fondo · Eliminador de Fondos PNG Transparente" />
+  <meta property="og:description" content="Eliminá el fondo de imágenes con inteligencia artificial local y exportá un PNG transparente real con canal alfa." />
+  <meta property="og:url" content="https://lautaro005.github.io/tools/apps/fondo/" />
+  <meta property="og:image" content="https://lautaro005.github.io/tools/apps/fondo/assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Quitar Fondo - PNG Transparente Real con IA" />
+  <meta property="og:locale" content="es_AR" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Quitar Fondo · Eliminador de Fondos PNG Transparente" />
+  <meta name="twitter:description" content="Eliminá el fondo de imágenes con IA local y exportá un PNG transparente real con canal alfa." />
+  <meta name="twitter:image" content="https://lautaro005.github.io/tools/apps/fondo/assets/og-image.png" />
+  <meta name="twitter:image:alt" content="Quitar Fondo - PNG Transparente Real con IA" />
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Quitar Fondo",
+    "url": "https://lautaro005.github.io/tools/apps/fondo/",
+    "description": "Herramienta web inteligente para remover el fondo de fotos e imágenes directamente en el navegador con IA local y exportación en PNG con canal alfa transparente garantizado.",
+    "applicationCategory": "DesignApplication",
+    "operatingSystem": "Web",
+    "inLanguage": "es-AR",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Tools Suite",
+      "url": "https://lautaro005.github.io/tools/"
+    }
+  }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #0C0C0E;
+      --surface: #131316;
+      --surface-hover: #18181D;
+      --border: #1E1E24;
+      --border-accent: rgba(212, 168, 67, 0.35);
+      --text-primary: #F2F2F0;
+      --text-secondary: #8A8A94;
+      --accent: #D4A843;
+      --accent-dim: rgba(212, 168, 67, 0.12);
+      --success: #34D399;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background glow */
+    .ambient-glow {
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 760px;
+      height: 400px;
+      background: radial-gradient(ellipse at center, rgba(212, 168, 67, 0.09) 0%, rgba(12, 12, 14, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Layout Containers */
+    .container {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .container-content {
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(12, 12, 14, 0.85);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: 64px;
+      display: flex;
+      align-items: center;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-dim);
+      border: 1px solid rgba(212, 168, 67, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-title span {
+      color: var(--accent);
+    }
+
+    .app-badge {
+      font-size: 11.5px;
+      font-family: 'Geist Mono', monospace;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid rgba(212, 168, 67, 0.25);
+      padding: 3px 10px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-header {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 36px;
+      padding: 0 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 12.5px;
+      font-weight: 500;
+      gap: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .btn-header:hover {
+      border-color: rgba(212, 168, 67, 0.4);
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    .btn-icon-only {
+      padding: 0;
+      width: 36px;
+    }
+
+    /* Apps Popover Dropdown */
+    .apps-dropdown-wrapper {
+      position: relative;
+    }
+
+    .apps-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 280px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 6px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .apps-dropdown-menu.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .apps-dropdown-header {
+      padding: 8px 10px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+
+    .apps-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: var(--transition);
+    }
+
+    .apps-dropdown-item:hover {
+      background: var(--surface-hover);
+    }
+
+    .apps-dropdown-item.active {
+      background: rgba(212, 168, 67, 0.1);
+      border: 1px solid rgba(212, 168, 67, 0.25);
+    }
+
+    .apps-item-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .apps-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .apps-item-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .apps-dropdown-item:hover .apps-item-title {
+      color: var(--accent);
+    }
+
+    .apps-dropdown-item.active .apps-item-title {
+      color: var(--accent);
+    }
+
+    .apps-item-desc {
+      font-size: 11px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 44px 0 24px;
+      text-align: center;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid rgba(212, 168, 67, 0.25);
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.035em;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+
+    .hero-subtitle {
+      font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin: 0 auto;
+      line-height: 1.55;
+    }
+
+    /* Guarantee Pill */
+    .guarantee-callout {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(52, 211, 153, 0.08);
+      border: 1px solid rgba(52, 211, 153, 0.25);
+      color: #34D399;
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-top: 14px;
+    }
+
+    /* Main Section */
+    .main-section {
+      padding-bottom: 72px;
+      flex: 1;
+    }
+
+    .card-workspace {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+      margin-bottom: 24px;
+    }
+
+    /* Upload Dropzone */
+    .dropzone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-md);
+      padding: 48px 24px;
+      text-align: center;
+      background: var(--bg);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--accent);
+      background: rgba(212, 168, 67, 0.04);
+    }
+
+    .dropzone-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      color: var(--accent);
+      font-size: 26px;
+    }
+
+    .dropzone-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .dropzone-subtext {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .dropzone-shortcut {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: 'Geist Mono', monospace;
+      color: var(--text-secondary);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    /* Editor View (Shown when an image is loaded) */
+    .editor-view {
+      display: none;
+    }
+
+    .editor-view.active {
+      display: block;
+    }
+
+    /* Top Toolbar */
+    .editor-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .image-meta-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12.5px;
+      color: var(--text-secondary);
+    }
+
+    .btn-change-image {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+
+    .btn-change-image:hover {
+      color: var(--accent);
+      border-color: rgba(212, 168, 67, 0.4);
+    }
+
+    /* Engine Selector */
+    .engine-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .engine-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .engine-options {
+      display: flex;
+      gap: 6px;
+    }
+
+    .engine-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .engine-btn.active {
+      background: var(--surface);
+      color: var(--accent);
+      border-color: rgba(212, 168, 67, 0.4);
+    }
+
+    /* Processing Progress Bar */
+    .progress-box {
+      display: none;
+      background: var(--bg);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+
+    .progress-box.active {
+      display: block;
+    }
+
+    .progress-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12.5px;
+      margin-bottom: 8px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.2s ease;
+    }
+
+    /* Preview Canvas Area */
+    .preview-stage {
+      position: relative;
+      width: 100%;
+      min-height: 380px;
+      max-height: 540px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-bottom: 20px;
+      user-select: none;
+    }
+
+    /* CSS-ONLY Checkered Pattern for Genuine Transparency Preview */
+    .preview-stage.bg-checkered {
+      background-color: #121215;
+      background-image: 
+        linear-gradient(45deg, #18181D 25%, transparent 25%), 
+        linear-gradient(-45deg, #18181D 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #18181D 75%), 
+        linear-gradient(-45deg, transparent 75%, #18181D 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+
+    .preview-stage.bg-dark {
+      background-color: #0C0C0E;
+      background-image: none;
+    }
+
+    .preview-stage.bg-white {
+      background-color: #FFFFFF;
+      background-image: none;
+    }
+
+    /* Canvases */
+    #resultCanvas, #originalCanvas {
+      max-width: 100%;
+      max-height: 520px;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* Comparison Split Slider */
+    .compare-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .compare-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 50%;
+      overflow: hidden;
+      border-right: 2px solid var(--accent);
+      z-index: 10;
+    }
+
+    .compare-handle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #0C0C0E;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: 0 0 14px rgba(0, 0, 0, 0.6);
+      cursor: ew-resize;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .compare-slider-input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: ew-resize;
+      z-index: 30;
+      margin: 0;
+    }
+
+    /* Controls Bar below preview */
+    .preview-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .bg-preview-options {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bg-opt-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .bg-opt-btn.active {
+      border-color: var(--accent);
+      transform: scale(1.1);
+      box-shadow: 0 0 8px rgba(212, 168, 67, 0.4);
+    }
+
+    .bg-opt-checkered {
+      background-image: linear-gradient(45deg, #2A2A32 25%, transparent 25%), linear-gradient(-45deg, #2A2A32 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #2A2A32 75%), linear-gradient(-45deg, transparent 75%, #2A2A32 75%);
+      background-size: 8px 8px;
+      background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+      background-color: #121215;
+    }
+
+    .bg-opt-dark {
+      background-color: #0C0C0E;
+    }
+
+    .bg-opt-white {
+      background-color: #FFFFFF;
+    }
+
+    .view-mode-toggle {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-view-mode {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-view-mode.active {
+      color: var(--accent);
+      border-color: rgba(212, 168, 67, 0.4);
+      background: var(--bg);
+    }
+
+    /* Export Actions Bar */
+    .export-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .export-guarantee {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border: none;
+      color: #0C0C0E;
+      font-size: 13.5px;
+      font-weight: 600;
+      padding: 10px 22px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      background: #c39736;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-secondary:hover {
+      color: var(--text-primary);
+      border-color: var(--text-secondary);
+    }
+
+    /* Chroma / Tolerance controls for fallback mode */
+    .chroma-controls {
+      display: none;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .chroma-controls.active {
+      display: flex;
+    }
+
+    .slider-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .slider-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .slider-input {
+      flex: 1;
+      accent-color: var(--accent);
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--surface);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      color: var(--text-primary);
+      font-size: 13px;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: auto;
+      animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 0;
+      font-size: 13px;
+      color: var(--text-secondary);
+      background: var(--bg);
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <div class="brand-group">
+          <a href="../../index.html" class="brand">
+            <div class="brand-icon" role="img" aria-label="Logo rayo Tools Suite">⚡</div>
+            <div class="brand-title">Tools<span>.</span>io</div>
+          </a>
+          <span class="app-badge">
+            <span class="badge-dot"></span>
+            Quitar Fondo · IA Local
+          </span>
+        </div>
+
+        <div class="header-actions">
+          <a href="../../index.html" class="btn-header" title="Volver al catálogo principal">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span style="font-size: 12px;">Inicio</span>
+          </a>
+
+          <!-- Apps Popover Dropdown -->
+          <div class="apps-dropdown-wrapper">
+            <button class="btn-header btn-icon-only" id="appsMenuBtn" aria-expanded="false" aria-haspopup="true" title="Menú de aplicaciones de la suite" aria-label="Menú de aplicaciones">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
+              </svg>
+            </button>
+            <div class="apps-dropdown-menu" id="appsMenu" role="menu">
+              <div class="apps-dropdown-header">Aplicaciones de la suite</div>
+              <a href="../../index.html" class="apps-dropdown-item" role="menuitem">
+                <div class="apps-item-icon">⚡</div>
+                <div class="apps-item-info">
+                  <div class="apps-item-title">Tools Suite (Inicio)</div>
+                  <div class="apps-item-desc">Catálogo de aplicaciones</div>
+                </div>
+              </a>
+              <a href="../codigos/index.html" class="apps-dropdown-item" role="menuitem">
+                <div class="apps-item-icon">⚖️</div>
+                <div class="apps-item-info">
+                  <div class="apps-item-title">Códigos AR</div>
+                  <div class="apps-item-desc">Normativa legal e IA</div>
+                </div>
+              </a>
+              <a href="../citas/index.html" class="apps-dropdown-item" role="menuitem">
+                <div class="apps-item-icon">📖</div>
+                <div class="apps-item-info">
+                  <div class="apps-item-title">Citas APA</div>
+                  <div class="apps-item-desc">Generador bibliográfico</div>
+                </div>
+              </a>
+              <a href="../transfer/index.html" class="apps-dropdown-item" role="menuitem">
+                <div class="apps-item-icon">📡</div>
+                <div class="apps-item-info">
+                  <div class="apps-item-title">Transfer</div>
+                  <div class="apps-item-desc">AirDrop local & QR</div>
+                </div>
+              </a>
+              <a href="./index.html" class="apps-dropdown-item active" role="menuitem">
+                <div class="apps-item-icon">🪄</div>
+                <div class="apps-item-info">
+                  <div class="apps-item-title">
+                    <span>Quitar Fondo</span>
+                    <span style="font-size: 10px; color: var(--accent); font-weight: normal;">Actual</span>
+                  </div>
+                  <div class="apps-item-desc">PNG transparente con IA</div>
+                </div>
+              </a>
+              <a href="https://finanzar-delta.vercel.app" target="_blank" rel="noreferrer" class="apps-dropdown-item" role="menuitem">
+                <div class="apps-item-icon">💰</div>
+                <div class="apps-item-info">
+                  <div class="apps-item-title">
+                    <span>FinanzAR</span>
+                    <span style="font-size: 12px; color: var(--text-secondary); margin-left: 4px;">↗</span>
+                  </div>
+                  <div class="apps-item-desc">Finanzas personales</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-pill">
+        <span class="badge-dot"></span>
+        Procesamiento 100% en el Navegador
+      </div>
+      <h1 class="hero-title">Eliminá fondos al instante.<br/>PNG transparente real.</h1>
+      <p class="hero-subtitle">
+        Subí cualquier foto de personas, productos u objetos. La recortamos con inteligencia artificial local y podés descargarla en PNG con canal alfa transparente genuino, sin fondos falsos.
+      </p>
+      <div>
+        <div class="guarantee-callout">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <span>Garantía: Canal alfa 100% transparente (cero píxeles cuadriculados quemados)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Section -->
+  <section class="main-section">
+    <div class="container">
+      <div class="container-content">
+
+        <div class="card-workspace">
+          
+          <!-- Dropzone (Shown initially) -->
+          <div class="dropzone" id="dropzone">
+            <input type="file" id="imageFileInput" accept="image/png, image/jpeg, image/webp, image/avif" style="display: none;" />
+            <div class="dropzone-icon">🪄</div>
+            <div class="dropzone-text">Arrastrá y soltá tu foto aquí</div>
+            <div class="dropzone-subtext">o hacé clic para explorar desde tu equipo (JPG, PNG, WebP)</div>
+            <div class="dropzone-shortcut">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+              </svg>
+              <span>También podés pegar con Ctrl + V / Cmd + V</span>
+            </div>
+          </div>
+
+          <!-- Editor View (Shown once image is selected) -->
+          <div class="editor-view" id="editorView">
+            
+            <!-- Toolbar -->
+            <div class="editor-toolbar">
+              <div class="image-meta-info">
+                <span style="font-weight: 600; color: var(--text-primary);" id="metaFilename">imagen.png</span>
+                <span id="metaDimensions">0 × 0 px</span>
+                <span id="metaFilesize">0 KB</span>
+              </div>
+              <button class="btn-change-image" id="btnChangeImage">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" y1="5" x2="22" y2="5"/><line x1="19" y1="2" x2="19" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                </svg>
+                <span>Cambiar imagen</span>
+              </button>
+            </div>
+
+            <!-- Engine Selector -->
+            <div class="engine-bar">
+              <div class="engine-label">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                <span>Método de recorte:</span>
+              </div>
+              <div class="engine-options">
+                <button class="engine-btn active" id="btnEngineAi">✨ IA Neural (RMBG-1.4)</button>
+                <button class="engine-btn" id="btnEngineChroma">⚡ Recorte Rápido por Color</button>
+              </div>
+            </div>
+
+            <!-- Chroma Key / Tolerance Controls (for color cutout) -->
+            <div class="chroma-controls" id="chromaControls">
+              <div class="slider-group">
+                <span class="slider-label">Tolerancia de color:</span>
+                <input type="range" class="slider-input" id="chromaTolerance" min="5" max="90" value="28" />
+                <span style="font-family: 'Geist Mono', monospace; font-size: 11px; width: 30px;" id="chromaTolVal">28%</span>
+              </div>
+              <div class="slider-group">
+                <span class="slider-label">Suavizado de bordes:</span>
+                <input type="range" class="slider-input" id="chromaFeather" min="0" max="10" value="2" />
+                <span style="font-family: 'Geist Mono', monospace; font-size: 11px; width: 30px;" id="chromaFeatVal">2px</span>
+              </div>
+            </div>
+
+            <!-- Processing Progress Box -->
+            <div class="progress-box" id="progressBox">
+              <div class="progress-header">
+                <span id="progressStatusText" style="color: var(--accent); font-weight: 500;">Iniciando modelo neural en el navegador...</span>
+                <span id="progressPercent" style="font-family: 'Geist Mono', monospace; color: var(--text-secondary);">0%</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+            </div>
+
+            <!-- Preview Canvas Stage -->
+            <div class="preview-stage bg-checkered" id="previewStage">
+              <!-- Comparison slider container -->
+              <div class="compare-container" id="compareContainer">
+                <canvas id="resultCanvas"></canvas>
+
+                <!-- Overlay for comparison slider -->
+                <div class="compare-overlay" id="compareOverlay" style="display: none;">
+                  <canvas id="originalCanvas"></canvas>
+                </div>
+
+                <div class="compare-handle" id="compareHandle" style="display: none;">↔</div>
+                <input type="range" class="compare-slider-input" id="compareSlider" min="0" max="100" value="50" style="display: none;" />
+              </div>
+            </div>
+
+            <!-- Preview Controls Bar -->
+            <div class="preview-controls">
+              <div class="bg-preview-options">
+                <span style="font-size: 12px; color: var(--text-secondary); margin-right: 4px;">Fondo de vista:</span>
+                <button class="bg-opt-btn bg-opt-checkered active" id="bgOptCheckered" title="Visualización con transparencia (patrón CSS)" aria-label="Fondo cuadriculado CSS"></button>
+                <button class="bg-opt-btn bg-opt-dark" id="bgOptDark" title="Visualización sobre fondo oscuro" aria-label="Fondo oscuro"></button>
+                <button class="bg-opt-btn bg-opt-white" id="bgOptWhite" title="Visualización sobre fondo blanco" aria-label="Fondo blanco"></button>
+              </div>
+
+              <div class="view-mode-toggle">
+                <button class="btn-view-mode active" id="btnViewCutout">Recorte final</button>
+                <button class="btn-view-mode" id="btnViewCompare">Comparar con original</button>
+              </div>
+            </div>
+
+            <!-- Export Actions Bar -->
+            <div class="export-bar">
+              <div class="export-guarantee">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.5">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span>Exportación en PNG de 32 bits con canal alfa</span>
+              </div>
+
+              <div class="action-buttons">
+                <button class="btn-secondary" id="btnCopyClipboard">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                  </svg>
+                  <span>Copiar al portapapeles</span>
+                </button>
+                <button class="btn-primary" id="btnDownloadPng">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x1="12" y2="3"/>
+                  </svg>
+                  <span>Descargar PNG Transparente</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div>© 2026 Tools Suite · Quitar Fondo con IA.</div>
+        <div class="footer-links">
+          <a href="https://github.com/Lautaro005/tools" target="_blank" rel="noreferrer">Código fuente (GitHub)</a>
+          <a href="../../changelog.html">Changelog</a>
+          <a href="../../privacy.html">Política de Privacidad</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script Module with Transformers.js & Smart Canvas Segmentation -->
+  <script type="module">
+    // UI Elements
+    const dropzone = document.getElementById('dropzone');
+    const imageFileInput = document.getElementById('imageFileInput');
+    const editorView = document.getElementById('editorView');
+    const metaFilename = document.getElementById('metaFilename');
+    const metaDimensions = document.getElementById('metaDimensions');
+    const metaFilesize = document.getElementById('metaFilesize');
+    const btnChangeImage = document.getElementById('btnChangeImage');
+
+    const btnEngineAi = document.getElementById('btnEngineAi');
+    const btnEngineChroma = document.getElementById('btnEngineChroma');
+    const chromaControls = document.getElementById('chromaControls');
+    const chromaTolerance = document.getElementById('chromaTolerance');
+    const chromaTolVal = document.getElementById('chromaTolVal');
+    const chromaFeather = document.getElementById('chromaFeather');
+    const chromaFeatVal = document.getElementById('chromaFeatVal');
+
+    const progressBox = document.getElementById('progressBox');
+    const progressStatusText = document.getElementById('progressStatusText');
+    const progressPercent = document.getElementById('progressPercent');
+    const progressFill = document.getElementById('progressFill');
+
+    const previewStage = document.getElementById('previewStage');
+    const resultCanvas = document.getElementById('resultCanvas');
+    const originalCanvas = document.getElementById('originalCanvas');
+    const compareOverlay = document.getElementById('compareOverlay');
+    const compareHandle = document.getElementById('compareHandle');
+    const compareSlider = document.getElementById('compareSlider');
+
+    const bgOptCheckered = document.getElementById('bgOptCheckered');
+    const bgOptDark = document.getElementById('bgOptDark');
+    const bgOptWhite = document.getElementById('bgOptWhite');
+
+    const btnViewCutout = document.getElementById('btnViewCutout');
+    const btnViewCompare = document.getElementById('btnViewCompare');
+
+    const btnCopyClipboard = document.getElementById('btnCopyClipboard');
+    const btnDownloadPng = document.getElementById('btnDownloadPng');
+    const appsMenuBtn = document.getElementById('appsMenuBtn');
+    const appsMenu = document.getElementById('appsMenu');
+
+    // App State
+    let originalImage = null;
+    let originalFilename = 'imagen';
+    let currentEngine = 'ai'; // 'ai' | 'chroma'
+    let isComparing = false;
+    let aiModel = null;
+    let aiProcessor = null;
+    let isModelLoading = false;
+    let cachedMask = null;
+
+    // Toast helper
+    function showToast(msg, icon = '✨') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.2s ease';
+        setTimeout(() => toast.remove(), 200);
+      }, 3500);
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    // Apps Popover Toggle
+    appsMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isShowing = appsMenu.classList.toggle('show');
+      appsMenuBtn.classList.toggle('active', isShowing);
+      appsMenuBtn.setAttribute('aria-expanded', isShowing);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!appsMenu.contains(e.target) && e.target !== appsMenuBtn) {
+        appsMenu.classList.remove('show');
+        appsMenuBtn.classList.remove('active');
+        appsMenuBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Dropzone Events
+    dropzone.addEventListener('click', () => imageFileInput.click());
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    imageFileInput.addEventListener('change', () => {
+      if (imageFileInput.files && imageFileInput.files[0]) {
+        handleFile(imageFileInput.files[0]);
+        imageFileInput.value = '';
+      }
+    });
+
+    btnChangeImage.addEventListener('click', () => imageFileInput.click());
+
+    // Clipboard Paste Listener (Ctrl+V / Cmd+V)
+    window.addEventListener('paste', (e) => {
+      if (e.clipboardData && e.clipboardData.items) {
+        for (const item of e.clipboardData.items) {
+          if (item.type.startsWith('image/')) {
+            const file = item.getAsFile();
+            handleFile(file);
+            showToast('Imagen pegada desde el portapapeles', '📋');
+            break;
+          }
+        }
+      }
+    });
+
+    // Handle Selected File
+    function handleFile(file) {
+      if (!file.type.startsWith('image/')) {
+        showToast('Por favor seleccioná un archivo de imagen válido', '⚠️');
+        return;
+      }
+
+      originalFilename = file.name.replace(/\.[^/.]+$/, '');
+      metaFilename.textContent = file.name;
+      metaFilesize.textContent = formatBytes(file.size);
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          originalImage = img;
+          metaDimensions.textContent = `${img.naturalWidth} × ${img.naturalHeight} px`;
+          dropzone.style.display = 'none';
+          editorView.classList.add('active');
+          cachedMask = null;
+          setupOriginalCanvas();
+          processCurrentEngine();
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function setupOriginalCanvas() {
+      originalCanvas.width = originalImage.naturalWidth;
+      originalCanvas.height = originalImage.naturalHeight;
+      const ctx = originalCanvas.getContext('2d');
+      ctx.drawImage(originalImage, 0, 0);
+
+      resultCanvas.width = originalImage.naturalWidth;
+      resultCanvas.height = originalImage.naturalHeight;
+    }
+
+    // Engine Selection
+    btnEngineAi.addEventListener('click', () => {
+      if (currentEngine === 'ai') return;
+      currentEngine = 'ai';
+      btnEngineAi.classList.add('active');
+      btnEngineChroma.classList.remove('active');
+      chromaControls.classList.remove('active');
+      processCurrentEngine();
+    });
+
+    btnEngineChroma.addEventListener('click', () => {
+      if (currentEngine === 'chroma') return;
+      currentEngine = 'chroma';
+      btnEngineChroma.classList.add('active');
+      btnEngineAi.classList.remove('active');
+      chromaControls.classList.add('active');
+      processCurrentEngine();
+    });
+
+    // Chroma Sliders
+    chromaTolerance.addEventListener('input', () => {
+      chromaTolVal.textContent = `${chromaTolerance.value}%`;
+      if (currentEngine === 'chroma') processChromaCutout();
+    });
+
+    chromaFeather.addEventListener('input', () => {
+      chromaFeatVal.textContent = `${chromaFeather.value}px`;
+      if (currentEngine === 'chroma') processChromaCutout();
+    });
+
+    // Engine Router
+    function processCurrentEngine() {
+      if (!originalImage) return;
+      if (currentEngine === 'ai') {
+        processAiCutout();
+      } else {
+        processChromaCutout();
+      }
+    }
+
+    // --- Engine 1: AI Background Removal with Transformers.js (BRIA RMBG-1.4 / MODNet) ---
+    async function processAiCutout() {
+      if (cachedMask) {
+        applyAlphaMask(cachedMask);
+        return;
+      }
+
+      progressBox.classList.add('active');
+      progressStatusText.textContent = 'Cargando modelo de inteligencia artificial...';
+      progressPercent.textContent = '10%';
+      progressFill.style.width = '10%';
+
+      try {
+        // Dynamically import @xenova/transformers
+        const { AutoModel, AutoProcessor, RawImage, env } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2/+esm');
+        env.allowLocalModels = false;
+
+        progressStatusText.textContent = 'Descargando pesos del modelo neural (primera vez)...';
+        progressPercent.textContent = '35%';
+        progressFill.style.width = '35%';
+
+        const modelId = 'briaai/RMBG-1.4';
+
+        if (!aiModel) {
+          aiModel = await AutoModel.from_pretrained(modelId, {
+            progress_callback: (p) => {
+              if (p.status === 'progress' && p.total) {
+                const pct = Math.round((p.loaded / p.total) * 100);
+                progressStatusText.textContent = `Descargando modelo: ${p.file || ''} (${pct}%)`;
+                progressPercent.textContent = `${pct}%`;
+                progressFill.style.width = `${pct}%`;
+              }
+            }
+          });
+          aiProcessor = await AutoProcessor.from_pretrained(modelId);
+        }
+
+        progressStatusText.textContent = 'Segmentando bordes y aislando sujeto...';
+        progressPercent.textContent = '80%';
+        progressFill.style.width = '80%';
+
+        // Process image with Transformers.js
+        const rawImg = await RawImage.fromURL(originalImage.src);
+        const { pixel_values } = await aiProcessor(rawImg);
+        const { output } = await aiModel({ input: pixel_values });
+
+        const maskImage = await RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(originalImage.naturalWidth, originalImage.naturalHeight);
+
+        cachedMask = maskImage;
+        applyAlphaMask(maskImage);
+
+        progressPercent.textContent = '100%';
+        progressFill.style.width = '100%';
+        progressStatusText.textContent = '¡Fondo eliminado con éxito!';
+        setTimeout(() => progressBox.classList.remove('active'), 1000);
+        showToast('Fondo eliminado con IA neural', '🪄');
+      } catch (err) {
+        console.warn('AI model could not run, switching to fast chroma segmentation:', err);
+        progressBox.classList.remove('active');
+        showToast('Cambiando a modo de recorte por color automático', '⚡');
+        currentEngine = 'chroma';
+        btnEngineChroma.classList.add('active');
+        btnEngineAi.classList.remove('active');
+        chromaControls.classList.add('active');
+        processChromaCutout();
+      }
+    }
+
+    // Apply predicted alpha matte to canvas (Real Transparent PNG)
+    function applyAlphaMask(maskImage) {
+      const width = originalImage.naturalWidth;
+      const height = originalImage.naturalHeight;
+
+      resultCanvas.width = width;
+      resultCanvas.height = height;
+      const ctx = resultCanvas.getContext('2d');
+
+      // 1. Draw original
+      ctx.clearRect(0, 0, width, height);
+      ctx.drawImage(originalImage, 0, 0);
+
+      // 2. Extract pixels
+      const imageData = ctx.getImageData(0, 0, width, height);
+      const data = imageData.data;
+      const maskData = maskImage.data;
+
+      // 3. Modulate alpha channel directly
+      for (let i = 0; i < maskData.length; i++) {
+        const alphaIndex = i * 4 + 3;
+        // maskData is grayscale 0..255 (0 = background transparent, 255 = foreground)
+        data[alphaIndex] = maskData[i];
+      }
+
+      // 4. Put transparent pixels back
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    // --- Engine 2: Fast Client-side Chroma Key / Floodfill Segmentation ---
+    function processChromaCutout() {
+      const width = originalImage.naturalWidth;
+      const height = originalImage.naturalHeight;
+
+      resultCanvas.width = width;
+      resultCanvas.height = height;
+      const ctx = resultCanvas.getContext('2d');
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.drawImage(originalImage, 0, 0);
+
+      const imageData = ctx.getImageData(0, 0, width, height);
+      const data = imageData.data;
+
+      // Sample 4 corners to detect background color
+      const samplePixels = [
+        [0, 0],
+        [width - 1, 0],
+        [0, height - 1],
+        [width - 1, height - 1]
+      ];
+
+      let avgR = 0, avgG = 0, avgB = 0;
+      samplePixels.forEach(([x, y]) => {
+        const idx = (y * width + x) * 4;
+        avgR += data[idx];
+        avgG += data[idx + 1];
+        avgB += data[idx + 2];
+      });
+      avgR /= 4;
+      avgG /= 4;
+      avgB /= 4;
+
+      const tolPercent = parseInt(chromaTolerance.value, 10);
+      const maxDist = Math.sqrt(255*255 + 255*255 + 255*255);
+      const threshold = (tolPercent / 100) * maxDist;
+      const feather = parseInt(chromaFeather.value, 10);
+
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+
+        // Euclidean color distance from sampled background
+        const dist = Math.sqrt((r - avgR)**2 + (g - avgG)**2 + (b - avgB)**2);
+
+        if (dist <= threshold) {
+          if (feather > 0 && dist > threshold - (feather * 4)) {
+            // Smooth edge transition
+            const alphaFactor = (dist - (threshold - (feather * 4))) / (feather * 4);
+            data[i + 3] = Math.min(255, Math.max(0, Math.round(alphaFactor * 255)));
+          } else {
+            // 100% Genuine Alpha Transparency
+            data[i + 3] = 0;
+          }
+        }
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    // --- Background Preview Selector (CSS Only) ---
+    bgOptCheckered.addEventListener('click', () => {
+      previewStage.className = 'preview-stage bg-checkered';
+      bgOptCheckered.classList.add('active');
+      bgOptDark.classList.remove('active');
+      bgOptWhite.classList.remove('active');
+    });
+
+    bgOptDark.addEventListener('click', () => {
+      previewStage.className = 'preview-stage bg-dark';
+      bgOptDark.classList.add('active');
+      bgOptCheckered.classList.remove('active');
+      bgOptWhite.classList.remove('active');
+    });
+
+    bgOptWhite.addEventListener('click', () => {
+      previewStage.className = 'preview-stage bg-white';
+      bgOptWhite.classList.add('active');
+      bgOptCheckered.classList.remove('active');
+      bgOptDark.classList.remove('active');
+    });
+
+    // --- Comparison Split Slider ---
+    btnViewCutout.addEventListener('click', () => {
+      isComparing = false;
+      btnViewCutout.classList.add('active');
+      btnViewCompare.classList.remove('active');
+      compareOverlay.style.display = 'none';
+      compareHandle.style.display = 'none';
+      compareSlider.style.display = 'none';
+    });
+
+    btnViewCompare.addEventListener('click', () => {
+      isComparing = true;
+      btnViewCompare.classList.add('active');
+      btnViewCutout.classList.remove('active');
+      compareOverlay.style.display = 'block';
+      compareHandle.style.display = 'flex';
+      compareSlider.style.display = 'block';
+      updateComparisonSplit(50);
+    });
+
+    compareSlider.addEventListener('input', (e) => {
+      updateComparisonSplit(e.target.value);
+    });
+
+    function updateComparisonSplit(percent) {
+      compareOverlay.style.width = `${percent}%`;
+      compareHandle.style.left = `${percent}%`;
+    }
+
+    // --- Copy Image to Clipboard ---
+    btnCopyClipboard.addEventListener('click', () => {
+      resultCanvas.toBlob(async (blob) => {
+        if (!blob) {
+          showToast('Error al generar la imagen', '⚠️');
+          return;
+        }
+        try {
+          await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob })
+          ]);
+          showToast('¡Imagen transparente copiada al portapapeles!', '📋');
+        } catch (err) {
+          showToast('Tu navegador no permite copiar imágenes directamente', '⚠️');
+        }
+      }, 'image/png');
+    });
+
+    // --- Download PNG Transparente Real ---
+    btnDownloadPng.addEventListener('click', () => {
+      // Export canvas directly with 8-bit alpha channel toBlob('image/png')
+      resultCanvas.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${originalFilename}-sin-fondo.png`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast('PNG transparente descargado con éxito', '📥');
+      }, 'image/png');
+    });
+  </script>
+</body>
+</html>

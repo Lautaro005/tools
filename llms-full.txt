@@ -17,6 +17,7 @@ Este archivo contiene la especificación extendida de Tools Suite y sus aplicaci
   - Código de Comercio derogado (CCom, 1.450 artículos de referencia histórica).
   - Código Civil derogado de Vélez Sarsfield (CCVS, 4.051 artículos de referencia histórica).
 - **Funcionalidades:** Búsqueda en memoria con normalización de acentos, descarte de stopwords, scoring por relevancia e intención, filtros interactivos por cuerpo normativo, y síntesis jurídica opcional mediante OpenRouter.
+- **Gestión de Modelos:** Los modelos disponibles se administran centralizadamente en el modal de Ajustes de la suite principal (`index.html`) y se sincronizan vía `localStorage` (`codigos_ar_saved_models`).
 
 ## 2. Citas APA (Generador Bibliográfico APA 7)
 - **Ruta:** `/apps/citas/`
@@ -27,6 +28,21 @@ Este archivo contiene la especificación extendida de Tools Suite y sus aplicaci
   3. Fallback de heurística de URL para inferir autor corporativo o dominio y fecha en slug.
 - **Formateo:** Normas APA 7ma edición para páginas web con o sin autor/fecha. Citas parentéticas `(Autor, Año)` y narrativas `Autor (Año)`. Exportación a texto plano, HTML enriquecido con cursivas, formato TXT y Markdown.
 
-## 3. FinanzAR
+## 3. Transfer (AirDrop Web & Código QR)
+- **Ruta:** `/apps/transfer/`
+- **Tecnología:** HTML5, CSS moderno, JavaScript ES2022 nativo, QRCode.js, Paho MQTT WebSockets, BroadcastChannel.
+- **Modo AirDrop (Radar de Red):** Detección reactiva de dispositivos conectados a la misma red local mediante BroadcastChannel y broker WebSocket MQTT público con sala deducida automáticamente por hash de IP pública. Al seleccionar un dispositivo destino, se envía una notificación interactiva para descargar los archivos o copiar el texto.
+- **Modo Código QR:** Genera un código QR dinámico para escanear con la cámara del teléfono móvil y acceder al enlace de descarga de archivos o copiado de texto directo.
+- **Soporte de carga:** Múltiples archivos simultáneos (fotos, documentos, zip) y texto libre con conteo de caracteres y atajos de portapapeles.
+
+## 4. Quitar Fondo (Eliminador de Fondos PNG con IA Local)
+- **Ruta:** `/apps/fondo/`
+- **Tecnología:** HTML5 Canvas, Transformers.js (`@xenova/transformers` ONNX WebAssembly), CSS Checkerboard.
+- **Motor Neural:** Utiliza el modelo `briaai/RMBG-1.4` ejecutado 100% en el navegador del usuario para segmentar personas, objetos y productos.
+- **Motor Rápido por Color:** Segmentación por distancia cromática y suavizado de bordes para fondos homogéneos.
+- **Garantía de Transparencia:** Exportación nativa en formato PNG con canal alfa de 32 bits (`alpha = 0`). No quema patrones cuadriculados simulados dentro de la imagen exportada.
+- **Herramientas:** Comparador split slider con la imagen original, conmutador de fondo de visualización (cuadriculado CSS, oscuro, blanco) y copiado directo al portapapeles.
+
+## 5. FinanzAR
 - **Ruta externa:** `https://finanzar-delta.vercel.app`
 - **Propósito:** Gestión ágil de presupuestos, categorías de gastos y seguimiento de finanzas personales.

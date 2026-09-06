@@ -59,6 +59,22 @@
         {
           "@type": "SoftwareApplication",
           "position": 3,
+          "name": "Transfer",
+          "url": "https://lautaro005.github.io/tools/apps/transfer/",
+          "applicationCategory": "UtilitiesApplication",
+          "description": "Transferencia local P2P estilo AirDrop y códigos QR para compartir archivos y textos entre dispositivos al instante."
+        },
+        {
+          "@type": "SoftwareApplication",
+          "position": 4,
+          "name": "Quitar Fondo",
+          "url": "https://lautaro005.github.io/tools/apps/fondo/",
+          "applicationCategory": "DesignApplication",
+          "description": "Eliminador de fondo inteligente para fotos e imágenes 100% local con exportación PNG transparente real."
+        },
+        {
+          "@type": "SoftwareApplication",
+          "position": 5,
           "name": "FinanzAR",
           "url": "https://finanzar-delta.vercel.app",
           "applicationCategory": "FinanceApplication",
@@ -378,7 +394,7 @@
 
     .modal-card {
       width: 100%;
-      max-width: 440px;
+      max-width: 480px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
@@ -826,7 +842,7 @@
         </a>
 
         <div class="header-actions">
-          <div class="header-badge">v1.1 · Tools Suite</div>
+          <div class="header-badge">v1.2 · Tools Suite</div>
 
           <!-- Menu desplegable de apps (Icono Casa) -->
           <div class="apps-dropdown-wrapper">
@@ -860,6 +876,20 @@
                 <div class="apps-item-info">
                   <div class="apps-item-title">Citas APA</div>
                   <div class="apps-item-desc">Generador bibliográfico</div>
+                </div>
+              </a>
+              <a href="./apps/transfer/index.html" class="apps-dropdown-item" role="menuitem">
+                <div class="apps-item-icon">📡</div>
+                <div class="apps-item-info">
+                  <div class="apps-item-title">Transfer</div>
+                  <div class="apps-item-desc">AirDrop local & QR</div>
+                </div>
+              </a>
+              <a href="./apps/fondo/index.html" class="apps-dropdown-item" role="menuitem">
+                <div class="apps-item-icon">🪄</div>
+                <div class="apps-item-info">
+                  <div class="apps-item-title">Quitar Fondo</div>
+                  <div class="apps-item-desc">PNG transparente con IA</div>
                 </div>
               </a>
               <a href="https://finanzar-delta.vercel.app" target="_blank" rel="noreferrer" class="apps-dropdown-item" role="menuitem">
@@ -908,7 +938,7 @@
     <div class="container">
       <div class="gallery-header">
         <span class="gallery-heading">Catálogo de Aplicaciones</span>
-        <span class="gallery-count">3 módulos</span>
+        <span class="gallery-count">5 módulos</span>
       </div>
 
       <div class="apps-grid">
@@ -957,7 +987,52 @@
           </div>
         </a>
 
-        <!-- App 3: FinanzAR (LIVE) -->
+        <!-- App 3: Transfer (LIVE) -->
+        <a href="./apps/transfer/index.html" class="app-card">
+          <div>
+            <div class="app-card-top">
+              <div class="app-icon" role="img" aria-label="Radar de transferencia">📡</div>
+              <span class="app-status status-live">● Disponible</span>
+            </div>
+            <h2 class="app-title">Transfer — AirDrop Web & QR</h2>
+            <p class="app-desc">
+              Envío ultrarrápido de archivos y textos entre dispositivos en la misma red local estilo AirDrop con radar visual y opción de código QR para escanear y descargar en móviles.
+            </p>
+          </div>
+          <div class="app-footer">
+            <div class="app-tags">
+              <span class="tag">AirDrop</span>
+              <span class="tag">Red Local</span>
+              <span class="tag">Código QR</span>
+              <span class="tag">P2P</span>
+              <span class="tag">Multiarchivo</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- App 4: Quitar Fondo (LIVE) -->
+        <a href="./apps/fondo/index.html" class="app-card">
+          <div>
+            <div class="app-card-top">
+              <div class="app-icon" role="img" aria-label="Varita de recorte">🪄</div>
+              <span class="app-status status-live">● Disponible</span>
+            </div>
+            <h2 class="app-title">Quitar Fondo — Eliminador de Fondo IA</h2>
+            <p class="app-desc">
+              Remueve el fondo de cualquier foto o imagen 100% en el cliente mediante inteligencia artificial local y exporta en PNG transparente real con canal alfa (sin fondos falsos).
+            </p>
+          </div>
+          <div class="app-footer">
+            <div class="app-tags">
+              <span class="tag">IA Local</span>
+              <span class="tag">PNG Real</span>
+              <span class="tag">Canal Alfa</span>
+              <span class="tag">Sin Servidor</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- App 5: FinanzAR (LIVE) -->
         <a href="https://finanzar-delta.vercel.app" target="_blank" rel="noreferrer" class="app-card">
           <div>
             <div class="app-card-top">
@@ -1034,6 +1109,40 @@
             </div>
           </div>
 
+          <!-- Gestión de Modelos de IA -->
+          <div class="form-group" style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+              <label class="form-label" style="margin-bottom: 0;" for="newModelInput">Modelos de IA Disponibles</label>
+              <span style="font-size: 11px; font-family: 'Geist Mono', monospace; color: var(--accent);" id="modelsCountBadge">0 guardados</span>
+            </div>
+            <p class="form-help" style="margin-top: 0; margin-bottom: 10px;">
+              Agregá o remové modelos de OpenRouter. Esta lista define los modelos seleccionables en Códigos AR y asistentes de la suite.
+            </p>
+            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+              <input
+                type="text"
+                id="newModelInput"
+                class="form-input"
+                placeholder="ej: google/gemini-2.0-flash-001"
+                autocomplete="off"
+                spellcheck="false"
+                style="padding-right: 12px;"
+              />
+              <button type="button" class="btn-secondary" id="addModelBtn" style="white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; padding: 0 14px; height: 38px; color: var(--accent); border-color: rgba(212, 168, 67, 0.4);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>Agregar</span>
+              </button>
+            </div>
+
+            <!-- Contenedor de modelos guardados -->
+            <div id="savedModelsContainer" style="display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; padding-right: 2px;">
+              <!-- Se puebla dinámicamente -->
+            </div>
+          </div>
+
           <div class="modal-actions">
             <button type="button" class="btn-secondary" id="cancelSettingsBtn">Cancelar</button>
             <button type="submit" class="btn-primary" id="saveSettingsBtn">Guardar cambios</button>
@@ -1060,6 +1169,67 @@
   <script>
     // Storage keys
     const STORAGE_KEY_API_KEY = 'codigos_ar_openrouter_key';
+    const STORAGE_KEY_SAVED_MODELS = 'codigos_ar_saved_models';
+    const DEFAULT_MODELS = [
+      'google/gemini-2.0-flash-001',
+      'meta-llama/llama-3.3-70b-instruct'
+    ];
+
+    function getSavedModels() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_SAVED_MODELS);
+        return raw ? JSON.parse(raw) : [...DEFAULT_MODELS];
+      } catch {
+        return [...DEFAULT_MODELS];
+      }
+    }
+
+    function saveSavedModels(models) {
+      localStorage.setItem(STORAGE_KEY_SAVED_MODELS, JSON.stringify(models));
+      renderSavedModels();
+    }
+
+    function renderSavedModels() {
+      const container = document.getElementById('savedModelsContainer');
+      const badge = document.getElementById('modelsCountBadge');
+      if (!container) return;
+      const models = getSavedModels();
+      if (badge) badge.textContent = models.length + (models.length === 1 ? ' guardado' : ' guardados');
+
+      if (models.length === 0) {
+        container.innerHTML = '<div style="font-size: 11.5px; color: var(--text-secondary); text-align: center; padding: 12px; border: 1px dashed var(--border); border-radius: var(--radius-sm);">No hay modelos agregados. Escribí un ID de OpenRouter y presioná "Agregar".</div>';
+        return;
+      }
+
+      container.innerHTML = models.map((m, idx) => {
+        return '<div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 11.5px; font-family: Geist Mono, monospace; gap: 8px;">' +
+          '<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-primary);" title="' + m + '">' + m + '</span>' +
+          '<button type="button" onclick="handleRemoveModel(' + idx + ')" title="Eliminar modelo de la lista" aria-label="Eliminar modelo" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 2px 4px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; transition: var(--transition);" onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='var(--text-secondary)'">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+          '</button>' +
+        '</div>';
+      }).join('');
+    }
+
+    window.handleRemoveModel = function(idx) {
+      const models = getSavedModels();
+      models.splice(idx, 1);
+      saveSavedModels(models);
+    };
+
+    function handleAddModel() {
+      const input = document.getElementById('newModelInput');
+      if (!input) return;
+      const val = input.value.trim();
+      if (!val) return;
+      const models = getSavedModels();
+      if (!models.includes(val)) {
+        models.push(val);
+        saveSavedModels(models);
+      }
+      input.value = '';
+      input.focus();
+    }
 
     // Elements
     const appsMenuBtn = document.getElementById('appsMenuBtn');
@@ -1120,6 +1290,7 @@
     function openModal() {
       apiKeyInput.value = localStorage.getItem(STORAGE_KEY_API_KEY) || '';
       updateKeyStatus();
+      renderSavedModels();
       settingsModal.classList.add('show');
       appsMenu.classList.remove('show');
       appsMenuBtn.classList.remove('active');
@@ -1163,8 +1334,22 @@
       closeModal();
     });
 
-    // Initialize status on load
+    // Model addition event listeners
+    const addModelBtn = document.getElementById('addModelBtn');
+    const newModelInput = document.getElementById('newModelInput');
+    if (addModelBtn) addModelBtn.addEventListener('click', handleAddModel);
+    if (newModelInput) {
+      newModelInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleAddModel();
+        }
+      });
+    }
+
+    // Initialize status and models on load
     updateKeyStatus();
+    renderSavedModels();
   </script>
 </body>
 </html>
