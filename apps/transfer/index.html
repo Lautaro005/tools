@@ -976,6 +976,28 @@
       display: block;
     }
 
+    #qrActiveState {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+    }
+
+    .qr-validity-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid rgba(212, 168, 67, 0.3);
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+
     .qr-display-card {
       display: inline-flex;
       flex-direction: column;
@@ -1552,18 +1574,21 @@
             </div>
 
             <!-- State C: QR Generated and Active -->
-            <div id="qrActiveState" style="display: none; text-align: center;">
-              <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-dim); border: 1px solid rgba(212, 168, 67, 0.3); padding: 5px 14px; border-radius: 999px; margin-bottom: 18px;">
+            <div id="qrActiveState" style="display: none; flex-direction: column; align-items: center; text-align: center;">
+              <!-- 1. Tarjeta con el código QR -->
+              <div class="qr-display-card" style="margin: 0 auto 16px;">
+                <div id="qrcodeCanvas"></div>
+              </div>
+
+              <!-- 2. Pill de validez temporal y contador regresivo estrictamente debajo del QR -->
+              <div class="qr-validity-pill">
                 <span class="pulse-dot"></span>
                 <span>Válido por 10 minutos</span>
                 <span style="color: var(--text-secondary);">·</span>
                 <span id="qrCountdownDisplay" style="font-family: 'Geist Mono', monospace;">10:00 restantes</span>
               </div>
 
-              <div class="qr-display-card" style="margin: 0 auto 16px;">
-                <div id="qrcodeCanvas"></div>
-              </div>
-
+              <!-- 3. Texto de instrucciones -->
               <p class="qr-instructions" id="qrInstructions">
                 Escaneá este código QR con la cámara de tu teléfono móvil para descargar los archivos o copiar el texto directamente sin intermediarios.
               </p>
@@ -1688,8 +1713,21 @@
   <script>
     // --- Application State ---
     const APP_CHANNEL = 'tools_airdrop_suite';
-    const MQTT_BROKER = 'broker.emqx.io';
-    const MQTT_PORT = 8084;
+    const MQTT_BROKERS = [
+      { host: 'broker.emqx.io', port: 8084, path: '/mqtt' },
+      { host: 'broker.hivemq.com', port: 8884, path: '/mqtt' }
+    ];
+    let currentBrokerIndex = 0;
+
+    function getCurrentBroker() {
+      return MQTT_BROKERS[currentBrokerIndex];
+    }
+
+    function rotateBroker() {
+      currentBrokerIndex = (currentBrokerIndex + 1) % MQTT_BROKERS.length;
+      console.log('Rotated MQTT broker to:', MQTT_BROKERS[currentBrokerIndex].host);
+    }
+
     const STORAGE_KEY_DEVICE_NAME = 'tools_transfer_device_name';
 
     // Detect Device Type
@@ -2022,26 +2060,65 @@
     const bc = new BroadcastChannel(APP_CHANNEL);
     bc.onmessage = (e) => handleSignalingMessage(e.data);
 
-    // 2. Derive Network Hash from Public IP (for auto Wi-Fi room pairing)
-    async function initNetworkRoom() {
-      try {
-        const res = await fetch('https://api.ipify.org?format=json', { cache: 'no-store' });
-        const data = await res.json();
-        if (data.ip) {
-          // Simple FNV-1a hash of IP
-          let hash = 2166136261;
-          for (let i = 0; i < data.ip.length; i++) {
-            hash ^= data.ip.charCodeAt(i);
-            hash = Math.imul(hash, 16777619);
-          }
-          const netId = (hash >>> 0).toString(16).substring(0, 8);
-          networkRoom = `tools_airdrop_${netId}`;
-          networkStatusTextEl.textContent = `Red local (#${netId})`;
-        }
-      } catch (e) {
-        networkRoom = 'tools_airdrop_default';
-        networkStatusTextEl.textContent = 'Red: Enlace P2P Activo';
+    // Message deduplication
+    const processedMsgIds = new Set();
+    function isDuplicateMessage(msgId) {
+      if (!msgId) return false;
+      if (processedMsgIds.has(msgId)) return true;
+      processedMsgIds.add(msgId);
+      if (processedMsgIds.size > 200) {
+        const first = processedMsgIds.values().next().value;
+        processedMsgIds.delete(first);
       }
+      return false;
+    }
+
+    // 2. Derive Network Hash from Public IP (for auto Wi-Fi room pairing) with IPv4 preference & fallback
+    async function initNetworkRoom() {
+      let resolvedIp = null;
+
+      // Try IPv4 endpoint first (ensures matching IPv4 on shared Wi-Fi NAT)
+      try {
+        const controller = new AbortController();
+        const tId = setTimeout(() => controller.abort(), 2500);
+        const res = await fetch('https://api4.ipify.org?format=json', { 
+          cache: 'no-store', 
+          signal: controller.signal 
+        });
+        clearTimeout(tId);
+        const data = await res.json();
+        if (data && data.ip) resolvedIp = data.ip;
+      } catch (e) {}
+
+      // Fallback to generic ipify
+      if (!resolvedIp) {
+        try {
+          const controller = new AbortController();
+          const tId = setTimeout(() => controller.abort(), 2500);
+          const res = await fetch('https://api.ipify.org?format=json', { 
+            cache: 'no-store', 
+            signal: controller.signal 
+          });
+          clearTimeout(tId);
+          const data = await res.json();
+          if (data && data.ip) resolvedIp = data.ip;
+        } catch (e) {}
+      }
+
+      if (resolvedIp) {
+        let hash = 2166136261;
+        for (let i = 0; i < resolvedIp.length; i++) {
+          hash ^= resolvedIp.charCodeAt(i);
+          hash = Math.imul(hash, 16777619);
+        }
+        const netId = (hash >>> 0).toString(16).substring(0, 8);
+        networkRoom = `tools_airdrop_${netId}`;
+        networkStatusTextEl.textContent = `Red local (#${netId})`;
+      } else {
+        networkRoom = 'tools_airdrop_lobby';
+        networkStatusTextEl.textContent = 'Red local (Canal compartido)';
+      }
+
       initMqtt();
     }
 
@@ -2049,47 +2126,86 @@
     function initMqtt() {
       try {
         if (typeof Paho === 'undefined') return;
+        if (mqttClient && mqttClient.isConnected()) return;
+
+        const broker = getCurrentBroker();
         const clientId = 'cl_' + myDeviceId;
-        mqttClient = new Paho.MQTT.Client(MQTT_BROKER, MQTT_PORT, clientId);
+        mqttClient = new Paho.MQTT.Client(broker.host, broker.port, broker.path, clientId);
 
         mqttClient.onConnectionLost = (responseObject) => {
           if (responseObject.errorCode !== 0) {
-            setTimeout(initMqtt, 4000);
+            rotateBroker();
+            setTimeout(initMqtt, 3000);
           }
         };
 
         mqttClient.onMessageArrived = (message) => {
           try {
+            // Direct QR transfer requests targeted at this sender
+            if (activeQrSessionId && message.destinationName === `tools/transfer/direct/${activeQrSessionId}/req`) {
+              handleDirectSenderMqttMessage(message.destinationName, message.payloadString);
+              return;
+            }
+
+            // AirDrop presence & signaling messages
             const data = JSON.parse(message.payloadString);
             handleSignalingMessage(data);
-          } catch (err) {}
+          } catch (err) {
+            console.error('Error handling MQTT message:', err);
+          }
         };
 
         mqttClient.connect({
           useSSL: true,
-          timeout: 5,
+          timeout: 6,
           onSuccess: () => {
-            mqttClient.subscribe(`tools/transfer/${networkRoom}/#`);
+            // Subscribe to both specific network room (if available) and common lobby
+            if (networkRoom && networkRoom !== 'tools_airdrop_lobby') {
+              mqttClient.subscribe(`tools/transfer/${networkRoom}/#`);
+            }
+            mqttClient.subscribe(`tools/transfer/lobby/#`);
+
+            // If a QR session is already active, subscribe to direct requests
+            if (activeQrSessionId) {
+              subscribeDirectSenderTopic(activeQrSessionId);
+            }
+
             broadcastPresence();
           },
           onFailure: () => {
-            setTimeout(initMqtt, 5000);
+            rotateBroker();
+            setTimeout(initMqtt, 4000);
           }
         });
-      } catch (err) {}
+      } catch (err) {
+        rotateBroker();
+        setTimeout(initMqtt, 4000);
+      }
     }
 
     // Send message to both BroadcastChannel & MQTT
     function sendSignaling(msg) {
+      if (!msg.msgId) {
+        msg.msgId = myDeviceId + '_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+      }
+
       // Local broadcast
       bc.postMessage(msg);
 
       // MQTT broadcast
       if (mqttClient && mqttClient.isConnected()) {
         try {
-          const m = new Paho.MQTT.Message(JSON.stringify(msg));
-          m.destinationName = `tools/transfer/${networkRoom}/messages`;
-          mqttClient.send(m);
+          // Always send to shared lobby for reliable cross-device visibility
+          const mLobby = new Paho.MQTT.Message(JSON.stringify(msg));
+          mLobby.destinationName = 'tools/transfer/lobby/messages';
+          mqttClient.send(mLobby);
+
+          // If in an IP-specific room, also broadcast there
+          if (networkRoom && networkRoom !== 'tools_airdrop_lobby') {
+            const mRoom = new Paho.MQTT.Message(JSON.stringify(msg));
+            mRoom.destinationName = `tools/transfer/${networkRoom}/messages`;
+            mqttClient.send(mRoom);
+          }
         } catch (e) {}
       }
     }
@@ -2102,6 +2218,7 @@
         name: myDeviceName,
         deviceType: myDeviceType,
         icon: myDeviceIcon,
+        room: networkRoom,
         timestamp: Date.now()
       });
     }
@@ -2125,14 +2242,17 @@
     // Handle Incoming Messages
     function handleSignalingMessage(data) {
       if (!data || data.from === myDeviceId) return;
+      if (isDuplicateMessage(data.msgId)) return;
 
       if (data.type === 'presence') {
         const isNew = !peers.has(data.from);
+        const isSameRoom = data.room && networkRoom && (data.room === networkRoom);
         peers.set(data.from, {
           id: data.from,
           name: data.name || 'Dispositivo',
           type: data.deviceType || 'desktop',
           icon: data.icon || '📱',
+          isSameIp: isSameRoom,
           lastSeen: Date.now()
         });
         if (isNew) renderPeers();
@@ -2144,9 +2264,6 @@
       } else if (data.type === 'transfer_rejected' && data.to === myDeviceId) {
         showToast(`${data.receiverName} rechazó la transferencia`, '❌');
         playChime(false);
-      } else if (data.type === 'request_qr_payload' && data.to === myDeviceId) {
-        // A mobile scanned our QR code! Send payload back
-        sendQrPayloadResponse(data.from);
       }
     }
 
@@ -2374,7 +2491,7 @@
       if (activeQrSessionId && activeQrExpiresAt > Date.now()) {
         qrEmptyState.style.display = 'none';
         qrPromptState.style.display = 'none';
-        qrActiveState.style.display = 'block';
+        qrActiveState.style.display = 'flex';
         qrExpiredState.style.display = 'none';
         return;
       }
@@ -2518,11 +2635,24 @@
 
     // Sender MQTT helper for direct QR requests
     function subscribeDirectSenderTopic(sessionId) {
-      if (!mqttClient || !mqttClient.isConnected()) return;
+      if (!sessionId || !mqttClient || !mqttClient.isConnected()) return;
       try {
         mqttClient.subscribe(`tools/transfer/direct/${sessionId}/req`);
+        console.log('Subscribed to direct QR requests on session:', sessionId);
       } catch (e) {
         console.warn('Could not subscribe to direct sender topic:', e);
+      }
+    }
+
+    let lastDirectResponseTime = 0;
+    function handleDirectSenderMqttMessage(topic, payloadString) {
+      if (!activeQrSessionId || !activeQrPayload) return;
+      if (Date.now() > activeQrExpiresAt) return;
+      if (topic === `tools/transfer/direct/${activeQrSessionId}/req`) {
+        const now = Date.now();
+        if (now - lastDirectResponseTime < 1000) return;
+        lastDirectResponseTime = now;
+        sendDirectPayloadOverMqtt(`tools/transfer/direct/${activeQrSessionId}/res`, activeQrPayload);
       }
     }
 
@@ -2530,7 +2660,7 @@
       if (!mqttClient || !mqttClient.isConnected()) return;
       try {
         const str = JSON.stringify(payload);
-        const CHUNK_SIZE = 64 * 1024;
+        const CHUNK_SIZE = 48 * 1024;
         if (str.length <= CHUNK_SIZE) {
           const msg = new Paho.MQTT.Message(JSON.stringify({ isChunked: false, data: payload }));
           msg.destinationName = targetTopic;
@@ -2548,7 +2678,13 @@
               data: chunkStr
             }));
             chunkMsg.destinationName = targetTopic;
-            mqttClient.send(chunkMsg);
+            setTimeout(() => {
+              try {
+                if (mqttClient && mqttClient.isConnected()) {
+                  mqttClient.send(chunkMsg);
+                }
+              } catch (e) {}
+            }, i * 25);
           }
         }
       } catch (err) {
@@ -2558,61 +2694,112 @@
 
     // Direct Recipient MQTT client for QR scanning device
     function initDirectRecipientMqtt(dlId, onPayloadReceived) {
-      const clientId = 'rec_' + Math.random().toString(36).substring(2, 10);
-      directRecipientMqttClient = new Paho.MQTT.Client(MQTT_BROKER, MQTT_PORT, clientId);
-
+      let recipientBrokerIndex = 0;
+      let reqInterval = null;
+      let rotateTimeout = null;
       let chunkStore = new Map();
+      let payloadHandled = false;
 
-      directRecipientMqttClient.onMessageArrived = (message) => {
+      function connectRecipient() {
+        if (payloadHandled) return;
+        const broker = MQTT_BROKERS[recipientBrokerIndex];
+        const clientId = 'rec_' + Math.random().toString(36).substring(2, 10);
+
         try {
-          const parsed = JSON.parse(message.payloadString);
-          if (!parsed.isChunked) {
-            onPayloadReceived(parsed.data);
-          } else {
-            let list = chunkStore.get(parsed.transferId);
-            if (!list) {
-              list = new Array(parsed.totalChunks);
-              chunkStore.set(parsed.transferId, list);
-            }
-            list[parsed.chunkIndex] = parsed.data;
-            const complete = list.filter(Boolean).length === parsed.totalChunks;
-            if (complete) {
-              const fullStr = list.join('');
-              chunkStore.delete(parsed.transferId);
-              onPayloadReceived(JSON.parse(fullStr));
-            }
+          if (directRecipientMqttClient) {
+            try { directRecipientMqttClient.disconnect(); } catch (e) {}
           }
-        } catch (e) {
-          console.error('Error parsing direct recipient MQTT message:', e);
-        }
-      };
+          directRecipientMqttClient = new Paho.MQTT.Client(broker.host, broker.port, broker.path, clientId);
 
-      directRecipientMqttClient.connect({
-        useSSL: true,
-        timeout: 10,
-        onSuccess: () => {
-          directRecipientMqttClient.subscribe(`tools/transfer/direct/${dlId}/res`);
-          
-          let reqInterval = setInterval(() => {
-            if (!directRecipientMqttClient || !directRecipientMqttClient.isConnected()) {
+          directRecipientMqttClient.onConnectionLost = (responseObject) => {
+            if (!payloadHandled) {
+              recipientBrokerIndex = (recipientBrokerIndex + 1) % MQTT_BROKERS.length;
+              setTimeout(connectRecipient, 2500);
+            }
+          };
+
+          directRecipientMqttClient.onMessageArrived = (message) => {
+            try {
+              const parsed = JSON.parse(message.payloadString);
+              if (!parsed.isChunked) {
+                payloadHandled = true;
+                clearInterval(reqInterval);
+                clearTimeout(rotateTimeout);
+                onPayloadReceived(parsed.data);
+              } else {
+                let list = chunkStore.get(parsed.transferId);
+                if (!list) {
+                  list = new Array(parsed.totalChunks);
+                  chunkStore.set(parsed.transferId, list);
+                }
+                list[parsed.chunkIndex] = parsed.data;
+                const receivedCount = list.filter(Boolean).length;
+                const dlLoadingText = document.getElementById('dlLoadingText');
+                if (dlLoadingText) {
+                  dlLoadingText.textContent = `Descargando contenido (${receivedCount}/${parsed.totalChunks})...`;
+                }
+                if (receivedCount === parsed.totalChunks) {
+                  const fullStr = list.join('');
+                  chunkStore.delete(parsed.transferId);
+                  payloadHandled = true;
+                  clearInterval(reqInterval);
+                  clearTimeout(rotateTimeout);
+                  onPayloadReceived(JSON.parse(fullStr));
+                }
+              }
+            } catch (e) {
+              console.error('Error parsing direct recipient MQTT message:', e);
+            }
+          };
+
+          directRecipientMqttClient.connect({
+            useSSL: true,
+            timeout: 8,
+            onSuccess: () => {
+              directRecipientMqttClient.subscribe(`tools/transfer/direct/${dlId}/res`, {
+                onSuccess: () => {
+                  sendReq();
+                }
+              });
+
+              function sendReq() {
+                if (payloadHandled || !directRecipientMqttClient || !directRecipientMqttClient.isConnected()) return;
+                try {
+                  const reqMsg = new Paho.MQTT.Message(JSON.stringify({ type: 'req_direct_payload', timestamp: Date.now() }));
+                  reqMsg.destinationName = `tools/transfer/direct/${dlId}/req`;
+                  directRecipientMqttClient.send(reqMsg);
+                } catch (e) {}
+              }
+
+              // Retry requests every 1200ms
               clearInterval(reqInterval);
-              return;
-            }
-            const reqMsg = new Paho.MQTT.Message(JSON.stringify({ type: 'req_direct_payload' }));
-            reqMsg.destinationName = `tools/transfer/direct/${dlId}/req`;
-            directRecipientMqttClient.send(reqMsg);
-          }, 1500);
+              reqInterval = setInterval(sendReq, 1200);
 
-          setTimeout(() => clearInterval(reqInterval), 45000);
-        },
-        onFailure: (err) => {
-          console.warn('Direct MQTT recipient connect failed:', err);
-          const dlLoadingText = document.getElementById('dlLoadingText');
-          if (dlLoadingText) {
-            dlLoadingText.textContent = 'Buscando al emisor en la red local...';
+              // If no response after 8 seconds, attempt fallback broker
+              clearTimeout(rotateTimeout);
+              rotateTimeout = setTimeout(() => {
+                if (!payloadHandled) {
+                  recipientBrokerIndex = (recipientBrokerIndex + 1) % MQTT_BROKERS.length;
+                  connectRecipient();
+                }
+              }, 8000);
+            },
+            onFailure: () => {
+              if (!payloadHandled) {
+                recipientBrokerIndex = (recipientBrokerIndex + 1) % MQTT_BROKERS.length;
+                setTimeout(connectRecipient, 2500);
+              }
+            }
+          });
+        } catch (err) {
+          if (!payloadHandled) {
+            recipientBrokerIndex = (recipientBrokerIndex + 1) % MQTT_BROKERS.length;
+            setTimeout(connectRecipient, 2500);
           }
         }
-      });
+      }
+
+      connectRecipient();
     }
 
     // --- Check URL Parameters (Direct Download Mode for QR Scans) ---
@@ -2794,23 +2981,6 @@
         });
       }
     }
-
-    // Handle sender response to direct MQTT request
-    function handleDirectSenderMqttMessage(topic, payloadString) {
-      if (!activeQrSessionId || !activeQrPayload) return;
-      if (Date.now() > activeQrExpiresAt) return;
-      if (topic === `tools/transfer/direct/${activeQrSessionId}/req`) {
-        sendDirectPayloadOverMqtt(`tools/transfer/direct/${activeQrSessionId}/res`, activeQrPayload);
-      }
-    }
-
-    // Hook direct MQTT handling into mqttClient message dispatcher
-    const originalOnMessageArrived = (message) => {
-      try {
-        const data = JSON.parse(message.payloadString);
-        handleSignaling(data);
-      } catch (err) {}
-    };
 
     // Initialize network, discovery and listeners
     initNetworkRoom();

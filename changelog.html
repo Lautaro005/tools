@@ -556,12 +556,42 @@
         <div class="last-updated">Historial cronológico de versiones y novedades de Tools Suite</div>
 
         <div class="timeline">
-          <!-- Versión 1.2.1 -->
+          <!-- Versión 1.2.2 -->
           <div class="version-card highlight">
             <div class="version-header">
               <div class="version-title-group">
-                <span class="version-tag">v1.2.1</span>
+                <span class="version-tag">v1.2.2</span>
                 <span class="version-badge">Actual</span>
+              </div>
+              <span class="version-date">Septiembre 2026</span>
+            </div>
+            <p class="version-desc">
+              Corrección de layout en modo QR de Transfer (pill de validez reubicada estrictamente debajo del código) y estabilización de conectividad en AirDrop (detección multired con lobby compartido y conexión directa de escaneo móvil).
+            </p>
+            <ul class="change-list">
+              <li class="change-item">
+                <span class="change-bullet"></span>                <span><span class="change-category">Layout QR</span> Reubicación de la pill de validez temporal y temporizador regresivo estrictamente debajo del código QR con alineación en columna centrada.</span>
+              </li>
+              <li class="change-item">
+                <span class="change-bullet"></span>
+                <span><span class="change-category">AirDrop Radar</span> Detección de dispositivos garantizada en la red local mediante resolución prioritaria IPv4, sala compartida tolerante (<code style="font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--accent);">tools/transfer/lobby/#</code>) y deduplicación por ID de mensaje para evitar desincronizaciones por IPv6 o iCloud Relay.</span>
+              </li>
+              <li class="change-item">
+                <span class="change-bullet"></span>
+                <span><span class="change-category">MQTT Resilient</span> Soporte multibróker con conmutación automática por error entre servidores públicos (<code style="font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--accent);">broker.emqx.io</code> y <code style="font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--accent);">broker.hivemq.com</code>).</span>
+              </li>
+              <li class="change-item">
+                <span class="change-bullet"></span>
+                <span><span class="change-category">Escaneo QR</span> Conexión fluida con el emisor al escanear: enrutamiento de solicitudes directas en el despachador de mensajes MQTT, reintentos activos cada 1.2s y envío en paquetes con pacing de 25ms para transferencias seguras.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Versión 1.2.1 -->
+          <div class="version-card">
+            <div class="version-header">
+              <div class="version-title-group">
+                <span class="version-tag">v1.2.1</span>
               </div>
               <span class="version-date">Septiembre 2026</span>
             </div>
