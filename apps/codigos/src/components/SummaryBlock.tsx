@@ -42,17 +42,17 @@ export const SummaryBlock: React.FC<SummaryBlockProps> = ({
                 Activá el resumen jurídico con Inteligencia Artificial
               </h4>
               <p className="text-xs text-[#8A8A94] mt-0.5">
-                Configurá tu API key de OpenRouter para recibir una síntesis automática de los artículos encontrados.
+                Configurá tu API key de OpenRouter en el Inicio de la suite para recibir una síntesis automática de los artículos encontrados.
               </p>
             </div>
           </div>
-          <button
-            onClick={onOpenSettings}
+          <a
+            href="../../index.html"
             className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#D4A843] px-3.5 py-1.5 text-xs font-semibold text-[#0C0C0E] hover:bg-[#c39736] transition-colors shrink-0"
           >
             <Key size={13} />
-            <span>Configurar API</span>
-          </button>
+            <span>Configurar en Inicio</span>
+          </a>
         </div>
       </div>
     );
@@ -109,7 +109,7 @@ export const SummaryBlock: React.FC<SummaryBlockProps> = ({
           <div className="h-4 w-4/5 rounded shimmer-skeleton" />
           <div className="flex items-center gap-2 pt-2 text-xs text-[#8A8A94]">
             <span className="inline-block h-2 w-2 rounded-full bg-[#D4A843] animate-pulse" />
-            <span>Consultando modelo en OpenRouter y analizando artículos normativos...</span>
+            <span>Consultando modelo en OpenRouter y sintetizando en texto plano...</span>
           </div>
         </div>
       )}
@@ -122,7 +122,7 @@ export const SummaryBlock: React.FC<SummaryBlockProps> = ({
             <div>
               <p className="font-medium text-red-300">{error}</p>
               <p className="text-red-300/70 mt-0.5">
-                Podés verificar la API key o cambiar el modelo en Ajustes.
+                Podés verificar la API key en el Inicio o cambiar el modelo en Ajustes.
               </p>
             </div>
           </div>
@@ -143,12 +143,12 @@ export const SummaryBlock: React.FC<SummaryBlockProps> = ({
         </div>
       )}
 
-      {/* Actual Summary Output */}
+      {/* Actual Summary Output - Clean Plain Text */}
       {!isLoading && !error && summary && (
         <div className="border-l-2 border-[#D4A843] pl-4">
-          <div className="prose prose-invert max-w-none text-sm leading-relaxed text-[#F2F2F0] whitespace-pre-line font-sans">
+          <p className="text-sm leading-relaxed text-[#F2F2F0] whitespace-pre-line font-sans">
             {summary}
-          </div>
+          </p>
         </div>
       )}
     </div>

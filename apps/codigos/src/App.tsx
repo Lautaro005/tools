@@ -33,6 +33,14 @@ export const App: React.FC = () => {
   // Handle AI summary fetch
   const triggerSummary = useCallback(
     async (queryText: string, foundArticles: Article[], filter: 'ALL' | CodeType = activeFilter) => {
+      // If AI summary is toggled off by user, do not fetch summary
+      if (!settings.summaryEnabled) {
+        setSummary(null);
+        setSummaryError(null);
+        setIsSummaryLoading(false);
+        return;
+      }
+
       if (!settings.apiKey.trim()) {
         setSummary(null);
         setSummaryError(null);
@@ -65,7 +73,7 @@ export const App: React.FC = () => {
         setIsSummaryLoading(false);
       }
     },
-    [settings.apiKey, settings.model, activeFilter]
+    [settings.summaryEnabled, settings.apiKey, settings.model, activeFilter]
   );
 
   // User triggers a search
@@ -115,8 +123,7 @@ export const App: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 px-4 sm:px-6">
         {/* If articles are still loading initially */}
-        {isArticlesLoading && (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
+        {isArticlesLoading && (          <div className="flex flex-col items-center justify-center py-24 text-center">
             <Loader2 className="h-8 w-8 animate-spin text-[#D4A843]" />
             <p className="mt-3 text-sm text-[#8A8A94]">
               Cargando e indexando artículos de Códigos de la Nación...
@@ -159,6 +166,7 @@ export const App: React.FC = () => {
                 onOpenSettings={() => setIsSettingsOpen(true)}
                 hasApiKey={hasApiKey}
                 model={settings.model}
+                summaryEnabled={settings.summaryEnabled}
               />
             )}
           </div>

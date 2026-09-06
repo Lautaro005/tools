@@ -15,6 +15,7 @@ interface ResultsPanelProps {
   onOpenSettings: () => void;
   hasApiKey: boolean;
   model: string;
+  summaryEnabled: boolean;
 }
 
 interface CodeGroup {
@@ -33,7 +34,8 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
   onRetrySummary,
   onOpenSettings,
   hasApiKey,
-  model
+  model,
+  summaryEnabled
 }) => {
   if (!query) return null;
 
@@ -103,16 +105,18 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
       transition={{ type: 'spring', stiffness: 120, damping: 20 }}
       className="mx-auto max-w-3xl space-y-8 pt-4 pb-16"
     >
-      {/* 1. Resumen IA at the top */}
-      <SummaryBlock
-        summary={summary}
-        isLoading={isSummaryLoading}
-        error={summaryError}
-        onRetry={onRetrySummary}
-        onOpenSettings={onOpenSettings}
-        hasApiKey={hasApiKey}
-        model={model}
-      />
+      {/* 1. Resumen IA at the top (only if enabled) */}
+      {summaryEnabled && (
+        <SummaryBlock
+          summary={summary}
+          isLoading={isSummaryLoading}
+          error={summaryError}
+          onRetry={onRetrySummary}
+          onOpenSettings={onOpenSettings}
+          hasApiKey={hasApiKey}
+          model={model}
+        />
+      )}
 
       {/* 2. Results Header Stats */}
       <div className="flex items-center justify-between border-b border-[#1E1E24] pb-2 text-xs text-[#8A8A94]">
@@ -141,15 +145,19 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
                   </span>
                 )}
               </div>
-              <span className="rounded-full bg-[#131316] border border-[#1E1E24] px-2.5 py-0.5 text-[11px] font-mono text-[#D4A843]">
+              <span className="text-xs font-mono text-[#8A8A94]">
                 {group.articles.length} {group.articles.length === 1 ? 'artículo' : 'artículos'}
               </span>
             </div>
 
-            {/* List of articles */}
-            <div className="divide-y divide-[#1E1E24]/60">
+            {/* Articles List */}
+            <div className="space-y-2.5">
               {group.articles.map(article => (
-                <ArticleCard key={article.id} article={article} />
+                <ArticleCard
+                  key={article.id}
+                  article={article}
+                  
+                />
               ))}
             </div>
           </section>

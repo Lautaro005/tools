@@ -15,6 +15,7 @@ export interface Article {
 export interface Settings {
   apiKey: string;
   model: string;
+  summaryEnabled: boolean;
 }
 
 export interface SearchFilters {
