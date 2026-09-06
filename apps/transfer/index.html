@@ -80,6 +80,11 @@
       padding: 0;
     }
 
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
     body {
       background-color: var(--bg);
       color: var(--text-primary);
@@ -99,6 +104,8 @@
       left: 50%;
       transform: translateX(-50%);
       width: 760px;
+      max-width: 100vw;
+      overflow: hidden;
       height: 400px;
       background: radial-gradient(ellipse at center, rgba(212, 168, 67, 0.09) 0%, rgba(12, 12, 14, 0) 70%);
       pointer-events: none;
@@ -177,6 +184,37 @@
 
     .brand-title span {
       color: var(--accent);
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      font-family: 'Geist Mono', monospace;
+      color: var(--text-secondary);
+      border-left: 1px solid var(--border);
+      padding-left: 10px;
+      margin-left: 2px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 640px) {
+      .brand-sub {
+        display: none;
+      }
+      .container {
+        padding: 0 16px;
+      }
+      .mode-switch {
+        width: 100%;
+      }
+      .mode-tab-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 8px 10px;
+        font-size: 12px;
+      }
     }
 
     .app-badge {
@@ -1213,31 +1251,19 @@
   <header>
     <div class="container">
       <div class="header-inner">
-        <div class="brand-group">
-          <a href="../../index.html" class="brand">
-            <div class="brand-icon" role="img" aria-label="Logo rayo Tools Suite">⚡</div>
-            <div class="brand-title">Tools<span>.</span>io</div>
-          </a>
-          <span class="app-badge">
-            <span class="pulse-dot"></span>
-            Transfer · AirDrop Web
-          </span>
-        </div>
+        <a href="../../index.html" class="brand" title="Volver a la suite de herramientas">
+          <div class="brand-icon" role="img" aria-label="Transfer P2P">📡</div>
+          <div class="brand-title">transfer<span>·</span>p2p</div>
+          <span class="brand-sub">airdrop & qr</span>
+        </a>
 
         <div class="header-actions">
-          <a href="../../index.html" class="btn-header" title="Volver al catálogo principal">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-              <polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
-            <span style="font-size: 12px;">Inicio</span>
-          </a>
-
-          <!-- Apps Popover Dropdown -->
+          <!-- Apps Popover Dropdown (House Icon) -->
           <div class="apps-dropdown-wrapper">
             <button class="btn-header btn-icon-only" id="appsMenuBtn" aria-expanded="false" aria-haspopup="true" title="Menú de aplicaciones de la suite" aria-label="Menú de aplicaciones">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
               </svg>
             </button>
             <div class="apps-dropdown-menu" id="appsMenu" role="menu">
@@ -1308,6 +1334,59 @@
       <p class="hero-subtitle">
         Compartí archivos y textos entre computadoras y teléfonos en tu misma red local o mediante un código QR sin subir datos a ningún servidor externo.
       </p>
+    </div>
+  </section>
+
+  <!-- Direct Download Mode View (for QR scans / direct mobile links) -->
+  <section class="direct-download-section" id="directDownloadView" style="display: none; padding: 40px 0 72px; flex: 1;">
+    <div class="container">
+      <div class="container-narrow" style="max-width: 560px;">
+        <div class="transfer-card" style="text-align: center; padding: 32px 24px;">
+          
+          <!-- State 1: Expired -->
+          <div id="dlExpiredBox" style="display: none;">
+            <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.3); color: #f87171; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 16px;">⏳</div>
+            <h2 style="font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">Enlace expirado</h2>
+            <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
+              Este código QR tenía una validez de 10 minutos y ya ha expirado. Solicitá al emisor generar un nuevo código QR.
+            </p>
+            <a href="./index.html" class="btn-primary" style="text-decoration: none;">
+              <span>Ir a Transfer</span>
+            </a>
+          </div>
+
+          <!-- State 2: Active Direct Download -->
+          <div id="dlActiveBox">
+            <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-family: 'Geist Mono', monospace; color: var(--accent); background: var(--accent-dim); border: 1px solid rgba(212, 168, 67, 0.25); padding: 4px 12px; border-radius: 999px; margin-bottom: 20px;">
+              <span class="pulse-dot"></span>
+              <span>Enlace temporal</span>
+              <span style="color: var(--text-secondary);">·</span>
+              <span id="dlCountdown">10:00 restantes</span>
+            </div>
+
+            <div id="dlIcon" style="width: 60px; height: 60px; border-radius: 16px; background: var(--accent-dim); border: 1px solid rgba(212, 168, 67, 0.3); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px;">📥</div>
+            
+            <h2 id="dlTitle" style="font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">Descarga Directa</h2>
+            <p id="dlSubtitle" style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 20px;">Descargá los archivos o copiá el texto recibido.</p>
+
+            <!-- Loading spinner -->
+            <div id="dlLoadingSpinner" style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px 0;">
+              <div style="width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+              <span style="font-size: 13px; color: var(--text-secondary);" id="dlLoadingText">Conectando con el emisor...</span>
+              <span style="font-size: 11px; color: var(--text-secondary);">Mantené abierta la pestaña del emisor</span>
+            </div>
+
+            <!-- Content Area (files or text) -->
+            <div id="dlContentArea" style="display: none; text-align: left; margin-bottom: 24px;"></div>
+
+            <!-- Action buttons -->
+            <div id="dlActions" style="display: none; justify-content: center; gap: 12px; flex-wrap: wrap;">
+              <button class="btn-primary" id="btnDlPrimary" style="padding: 12px 24px; font-size: 14px;"></button>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1448,26 +1527,78 @@
 
           <!-- View 2: QR Code Mode -->
           <div class="qr-view" id="qrView">
-            <div class="qr-display-card">
-              <div id="qrcodeCanvas"></div>
+            <!-- State A: Empty (no files, no text) -->
+            <div id="qrEmptyState" style="padding: 24px 16px; text-align: center;">
+              <div style="font-size: 36px; margin-bottom: 8px;">📦</div>
+              <p style="font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">Esperando contenido</p>
+              <p style="font-size: 13px; color: var(--text-secondary); max-width: 440px; margin: 0 auto;">
+                Subí archivos o escribí un texto arriba para generar tu código QR de descarga directa.
+              </p>
             </div>
 
-            <p class="qr-instructions" id="qrInstructions">
-              Escaneá este código QR con la cámara de tu teléfono móvil para descargar los archivos o copiar el texto de forma directa.
-            </p>
-
-            <div class="qr-actions">
-              <button class="btn-secondary" id="btnCopyShareUrl">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+            <!-- State B: Content ready, prompt button -->
+            <div id="qrPromptState" style="display: none; padding: 24px 16px; text-align: center;">
+              <div style="font-size: 36px; margin-bottom: 8px;">⚡</div>
+              <p style="font-weight: 600; color: var(--text-primary); margin-bottom: 6px;" id="qrReadySummary">Contenido listo para compartir</p>
+              <p style="font-size: 13px; color: var(--text-secondary); max-width: 480px; margin: 0 auto 20px;">
+                Generá un código QR con enlace directo válido por 10 minutos para escanear y descargar directamente desde el móvil sin pasar por el radar ni esperas.
+              </p>
+              <button class="btn-primary" id="btnGenerateQr" style="padding: 12px 24px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 16px rgba(212, 168, 67, 0.25);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/>
                 </svg>
-                <span>Copiar enlace directo</span>
+                <span>Generar código QR (válido por 10 minutos)</span>
               </button>
-              <button class="btn-secondary" id="btnDownloadQr">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x1="12" y2="3"/>
-                </svg>
-                <span>Descargar QR</span>
+            </div>
+
+            <!-- State C: QR Generated and Active -->
+            <div id="qrActiveState" style="display: none; text-align: center;">
+              <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-dim); border: 1px solid rgba(212, 168, 67, 0.3); padding: 5px 14px; border-radius: 999px; margin-bottom: 18px;">
+                <span class="pulse-dot"></span>
+                <span>Válido por 10 minutos</span>
+                <span style="color: var(--text-secondary);">·</span>
+                <span id="qrCountdownDisplay" style="font-family: 'Geist Mono', monospace;">10:00 restantes</span>
+              </div>
+
+              <div class="qr-display-card" style="margin: 0 auto 16px;">
+                <div id="qrcodeCanvas"></div>
+              </div>
+
+              <p class="qr-instructions" id="qrInstructions">
+                Escaneá este código QR con la cámara de tu teléfono móvil para descargar los archivos o copiar el texto directamente sin intermediarios.
+              </p>
+
+              <div class="qr-actions">
+                <button class="btn-secondary" id="btnCopyShareUrl">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                  </svg>
+                  <span>Copiar enlace directo</span>
+                </button>
+                <button class="btn-secondary" id="btnDownloadQr">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x1="12" y2="3"/>
+                  </svg>
+                  <span>Descargar QR</span>
+                </button>
+                <button class="btn-secondary" id="btnRegenerateQr" title="Generar nuevo código QR">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>
+                  </svg>
+                  <span>Regenerar</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- State D: QR Expired -->
+            <div id="qrExpiredState" style="display: none; padding: 24px 16px; text-align: center;">
+              <div style="font-size: 36px; margin-bottom: 8px;">⏳</div>
+              <p style="font-weight: 600; color: #f87171; margin-bottom: 4px;">El código QR ha expirado</p>
+              <p style="font-size: 13px; color: var(--text-secondary); max-width: 440px; margin: 0 auto 16px;">
+                Transcurrieron los 10 minutos de validez del código QR generado.
+              </p>
+              <button class="btn-primary" id="btnExpiredRegenerate">
+                <span>Generar nuevo código QR (10 minutos)</span>
               </button>
             </div>
           </div>
@@ -1544,7 +1675,7 @@
   <footer>
     <div class="container">
       <div class="footer-inner">
-        <div>© 2026 Tools Suite · Transferencia P2P.</div>
+        <div>© 2026 Tools Suite.</div>
         <div class="footer-links">
           <a href="https://github.com/Lautaro005/tools" target="_blank" rel="noreferrer">Código fuente (GitHub)</a>
           <a href="../../changelog.html">Changelog</a>
@@ -1588,6 +1719,11 @@
     let incomingPayload = null;
     let qrInstance = null;
     let mqttClient = null;
+    let activeQrSessionId = null;
+    let activeQrExpiresAt = 0;
+    let activeQrPayload = null;
+    let qrCountdownInterval = null;
+    let directRecipientMqttClient = null;
 
     // --- Audio Feedback (Web Audio API) ---
     function playChime(success = true) {
@@ -1675,6 +1811,9 @@
     const nameForm = document.getElementById('nameForm');
     const deviceNameInput = document.getElementById('deviceNameInput');
 
+    const btnGenerateQr = document.getElementById('btnGenerateQr');
+    const btnRegenerateQr = document.getElementById('btnRegenerateQr');
+    const btnExpiredRegenerate = document.getElementById('btnExpiredRegenerate');
     const btnCopyShareUrl = document.getElementById('btnCopyShareUrl');
     const btnDownloadQr = document.getElementById('btnDownloadQr');
     const appsMenuBtn = document.getElementById('appsMenuBtn');
@@ -1724,7 +1863,7 @@
       tabAirdrop.setAttribute('aria-selected', 'false');
       airdropView.style.display = 'none';
       qrView.classList.add('active');
-      generateQrCode();
+      updateQrTabState();
     });
 
     // Payload Tabs Switcher
@@ -1735,7 +1874,7 @@
       filesSection.style.display = 'block';
       textSection.classList.remove('active');
       renderPeers();
-      if (currentMode === 'qr') generateQrCode();
+      if (currentMode === 'qr') { activeQrSessionId = null; activeQrPayload = null; clearInterval(qrCountdownInterval); updateQrTabState(); }
     });
 
     payloadTabText.addEventListener('click', () => {
@@ -1745,7 +1884,7 @@
       filesSection.style.display = 'none';
       textSection.classList.add('active');
       renderPeers();
-      if (currentMode === 'qr') generateQrCode();
+      if (currentMode === 'qr') { activeQrSessionId = null; activeQrPayload = null; clearInterval(qrCountdownInterval); updateQrTabState(); }
     });
 
     // Device Name Edit Modal
@@ -1813,7 +1952,7 @@
       selectedFiles = [...selectedFiles, ...newFiles];
       renderFilesTray();
       renderPeers();
-      if (currentMode === 'qr') generateQrCode();
+      if (currentMode === 'qr') { activeQrSessionId = null; activeQrPayload = null; clearInterval(qrCountdownInterval); updateQrTabState(); }
       showToast(`${newFiles.length} archivo(s) listo(s) para enviar`, '📁');
     }
 
@@ -1821,7 +1960,7 @@
       selectedFiles.splice(index, 1);
       renderFilesTray();
       renderPeers();
-      if (currentMode === 'qr') generateQrCode();
+      if (currentMode === 'qr') { activeQrSessionId = null; activeQrPayload = null; clearInterval(qrCountdownInterval); updateQrTabState(); }
     }
 
     function renderFilesTray() {
@@ -1853,7 +1992,7 @@
       textPayload = textPayloadInput.value;
       textCharCount.textContent = `${textPayload.length} caracter${textPayload.length === 1 ? '' : 'es'}`;
       renderPeers();
-      if (currentMode === 'qr') generateQrCode();
+      if (currentMode === 'qr') { activeQrSessionId = null; activeQrPayload = null; clearInterval(qrCountdownInterval); updateQrTabState(); }
     });
 
     btnPasteText.addEventListener('click', async () => {
@@ -1863,7 +2002,7 @@
         textPayload = text;
         textCharCount.textContent = `${text.length} caracteres`;
         renderPeers();
-        if (currentMode === 'qr') generateQrCode();
+        if (currentMode === 'qr') { activeQrSessionId = null; activeQrPayload = null; clearInterval(qrCountdownInterval); updateQrTabState(); }
         showToast('Texto pegado del portapapeles', '📋');
       } catch (err) {
         showToast('No se pudo acceder al portapapeles', '⚠️');
@@ -2132,6 +2271,44 @@
       }[m]));
     }
 
+    // --- File Blob Helpers for Download ---
+    function dataUrlToBlob(dataUrl) {
+      try {
+        const parts = dataUrl.split(',');
+        const mimeMatch = parts[0].match(/:(.*?);/);
+        const mime = mimeMatch ? mimeMatch[1] : 'application/octet-stream';
+        const bstr = atob(parts[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+      } catch (e) {
+        console.error('Error al convertir DataURL a Blob:', e);
+        return null;
+      }
+    }
+
+    function triggerDownload(name, dataUrl) {
+      const blob = dataUrlToBlob(dataUrl);
+      if (!blob) {
+        showToast('Error al procesar el archivo para descarga', '⚠️');
+        return;
+      }
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = blobUrl;
+      a.download = name || 'archivo';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        a.remove();
+        URL.revokeObjectURL(blobUrl);
+      }, 3000);
+    }
+
     btnAcceptTransfer.addEventListener('click', () => {
       if (!incomingPayload) return;
 
@@ -2142,13 +2319,10 @@
           showToast('No se pudo copiar automáticamente', '⚠️');
         });
       } else if (incomingPayload.payloadType === 'files') {
-        incomingPayload.files.forEach(f => {
-          const a = document.createElement('a');
-          a.href = f.data;
-          a.download = f.name;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
+        incomingPayload.files.forEach((f, idx) => {
+          setTimeout(() => {
+            triggerDownload(f.name, f.data);
+          }, idx * 250);
         });
         showToast(`Descargando ${incomingPayload.files.length} archivo(s)`, '📥');
       }
@@ -2177,25 +2351,102 @@
       incomingPayload = null;
     });
 
-    // --- QR Code Mode Generator ---
-    function generateQrCode() {
+    // --- QR Code Mode Generator (10 min session) ---
+    function updateQrTabState() {
+      const qrEmptyState = document.getElementById('qrEmptyState');
+      const qrPromptState = document.getElementById('qrPromptState');
+      const qrActiveState = document.getElementById('qrActiveState');
+      const qrExpiredState = document.getElementById('qrExpiredState');
+      const qrReadySummary = document.getElementById('qrReadySummary');
+
+      if (!qrEmptyState) return;
+
+      if (!hasPayload()) {
+        qrEmptyState.style.display = 'block';
+        qrPromptState.style.display = 'none';
+        qrActiveState.style.display = 'none';
+        qrExpiredState.style.display = 'none';
+        clearInterval(qrCountdownInterval);
+        activeQrSessionId = null;
+        return;
+      }
+
+      if (activeQrSessionId && activeQrExpiresAt > Date.now()) {
+        qrEmptyState.style.display = 'none';
+        qrPromptState.style.display = 'none';
+        qrActiveState.style.display = 'block';
+        qrExpiredState.style.display = 'none';
+        return;
+      }
+
+      if (activeQrSessionId && activeQrExpiresAt <= Date.now()) {
+        qrEmptyState.style.display = 'none';
+        qrPromptState.style.display = 'none';
+        qrActiveState.style.display = 'none';
+        qrExpiredState.style.display = 'block';
+        return;
+      }
+
+      qrEmptyState.style.display = 'none';
+      qrPromptState.style.display = 'block';
+      qrActiveState.style.display = 'none';
+      qrExpiredState.style.display = 'none';
+
+      if (currentPayloadType === 'text') {
+        qrReadySummary.textContent = `Texto listo (${textPayload.trim().length} caracteres)`;
+      } else {
+        const totalSize = selectedFiles.reduce((acc, f) => acc + f.size, 0);
+        qrReadySummary.textContent = `${selectedFiles.length} archivo(s) listo(s) (${formatBytes(totalSize)})`;
+      }
+    }
+
+    async function startQrSession() {
+      if (!hasPayload()) {
+        showToast('Primero agregá archivos o escribí un texto', '💡');
+        return;
+      }
+
+      let filePayloads = [];
+      if (currentPayloadType === 'files') {
+        showToast('Preparando archivos para transferencia QR...', '⏳');
+        const filePromises = selectedFiles.map(file => {
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              resolve({
+                name: file.name,
+                type: file.type || 'application/octet-stream',
+                size: file.size,
+                data: reader.result
+              });
+            };
+            reader.readAsDataURL(file);
+          });
+        });
+        filePayloads = await Promise.all(filePromises);
+      }
+
+      activeQrSessionId = 'dl_' + Math.random().toString(36).substring(2, 9);
+      activeQrExpiresAt = Date.now() + 10 * 60 * 1000;
+      activeQrPayload = {
+        type: currentPayloadType,
+        text: currentPayloadType === 'text' ? textPayload.trim() : '',
+        files: filePayloads,
+        expiresAt: activeQrExpiresAt
+      };
+
       const qrContainer = document.getElementById('qrcodeCanvas');
       qrContainer.innerHTML = '';
 
-      let targetUrl = '';
-
-      if (currentPayloadType === 'text' && textPayload.trim().length > 0) {
-        // If text payload is short, embed directly in URL hash
-        targetUrl = `${window.location.origin}${window.location.pathname}#text=${encodeURIComponent(textPayload.trim())}`;
-      } else {
-        // Connect to current sender session
-        targetUrl = `${window.location.origin}${window.location.pathname}?receive=${myDeviceId}&room=${networkRoom}`;
+      let targetUrl = `${window.location.origin}${window.location.pathname}?dl=${activeQrSessionId}&exp=${activeQrExpiresAt}`;
+      if (currentPayloadType === 'text') {
+        targetUrl += `#text=${encodeURIComponent(textPayload.trim())}`;
       }
 
       qrInstance = new QRCode(qrContainer, {
         text: targetUrl,
-        width: 190,
-        height: 190,
+        width: 195,
+        height: 195,
         colorDark: '#0C0C0E',
         colorLight: '#FFFFFF',
         correctLevel: QRCode.CorrectLevel.M
@@ -2203,7 +2454,7 @@
 
       btnCopyShareUrl.onclick = () => {
         navigator.clipboard.writeText(targetUrl).then(() => {
-          showToast('Enlace de transferencia copiado', '📋');
+          showToast('Enlace directo (válido por 10 min) copiado', '📋');
         });
       };
 
@@ -2218,80 +2469,348 @@
           a.remove();
         }
       };
+
+      clearInterval(qrCountdownInterval);
+      function tickCountdown() {
+        const remainingMs = activeQrExpiresAt - Date.now();
+        if (remainingMs <= 0) {
+          clearInterval(qrCountdownInterval);
+          activeQrPayload = null;
+          updateQrTabState();
+          return;
+        }
+        const totalSecs = Math.floor(remainingMs / 1000);
+        const mins = Math.floor(totalSecs / 60);
+        const secs = totalSecs % 60;
+        const disp = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} restantes`;
+        const el = document.getElementById('qrCountdownDisplay');
+        if (el) el.textContent = disp;
+      }
+      tickCountdown();
+      qrCountdownInterval = setInterval(tickCountdown, 1000);
+
+      // BroadcastChannel for local/same-browser delivery
+      try {
+        const bc = new BroadcastChannel('tools_direct_' + activeQrSessionId);
+        bc.onmessage = (ev) => {
+          if (ev.data && ev.data.type === 'req_direct_payload') {
+            if (activeQrPayload && Date.now() <= activeQrExpiresAt) {
+              bc.postMessage({
+                type: 'res_direct_payload',
+                payload: activeQrPayload
+              });
+            }
+          }
+        };
+      } catch (e) {}
+
+      // Direct MQTT topic for mobile phone scanning QR
+      subscribeDirectSenderTopic(activeQrSessionId);
+
+      updateQrTabState();
+      showToast('Código QR generado. Válido por 10 minutos.', '✨');
+      playChime(true);
     }
 
-    // Send payload response when a device requests via QR code link
-    async function sendQrPayloadResponse(receiverId) {
-      if (currentPayloadType === 'text' && textPayload.trim()) {
-        sendSignaling({
-          type: 'transfer_request',
-          from: myDeviceId,
-          to: receiverId,
-          senderName: myDeviceName,
-          senderIcon: myDeviceIcon,
-          payloadType: 'text',
-          text: textPayload
-        });
-      } else if (currentPayloadType === 'files' && selectedFiles.length > 0) {
-        const filePromises = selectedFiles.map(file => {
-          return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-              resolve({
-                name: file.name,
-                type: file.type,
-                size: file.size,
-                data: reader.result
+    if (btnGenerateQr) btnGenerateQr.addEventListener('click', startQrSession);
+    if (btnRegenerateQr) btnRegenerateQr.addEventListener('click', startQrSession);
+    if (btnExpiredRegenerate) btnExpiredRegenerate.addEventListener('click', startQrSession);
+
+    // Sender MQTT helper for direct QR requests
+    function subscribeDirectSenderTopic(sessionId) {
+      if (!mqttClient || !mqttClient.isConnected()) return;
+      try {
+        mqttClient.subscribe(`tools/transfer/direct/${sessionId}/req`);
+      } catch (e) {
+        console.warn('Could not subscribe to direct sender topic:', e);
+      }
+    }
+
+    function sendDirectPayloadOverMqtt(targetTopic, payload) {
+      if (!mqttClient || !mqttClient.isConnected()) return;
+      try {
+        const str = JSON.stringify(payload);
+        const CHUNK_SIZE = 64 * 1024;
+        if (str.length <= CHUNK_SIZE) {
+          const msg = new Paho.MQTT.Message(JSON.stringify({ isChunked: false, data: payload }));
+          msg.destinationName = targetTopic;
+          mqttClient.send(msg);
+        } else {
+          const totalChunks = Math.ceil(str.length / CHUNK_SIZE);
+          const transferId = 't_' + Math.random().toString(36).substring(2, 7);
+          for (let i = 0; i < totalChunks; i++) {
+            const chunkStr = str.substring(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+            const chunkMsg = new Paho.MQTT.Message(JSON.stringify({
+              isChunked: true,
+              transferId,
+              chunkIndex: i,
+              totalChunks,
+              data: chunkStr
+            }));
+            chunkMsg.destinationName = targetTopic;
+            mqttClient.send(chunkMsg);
+          }
+        }
+      } catch (err) {
+        console.error('Error sending direct payload over MQTT:', err);
+      }
+    }
+
+    // Direct Recipient MQTT client for QR scanning device
+    function initDirectRecipientMqtt(dlId, onPayloadReceived) {
+      const clientId = 'rec_' + Math.random().toString(36).substring(2, 10);
+      directRecipientMqttClient = new Paho.MQTT.Client(MQTT_BROKER, MQTT_PORT, clientId);
+
+      let chunkStore = new Map();
+
+      directRecipientMqttClient.onMessageArrived = (message) => {
+        try {
+          const parsed = JSON.parse(message.payloadString);
+          if (!parsed.isChunked) {
+            onPayloadReceived(parsed.data);
+          } else {
+            let list = chunkStore.get(parsed.transferId);
+            if (!list) {
+              list = new Array(parsed.totalChunks);
+              chunkStore.set(parsed.transferId, list);
+            }
+            list[parsed.chunkIndex] = parsed.data;
+            const complete = list.filter(Boolean).length === parsed.totalChunks;
+            if (complete) {
+              const fullStr = list.join('');
+              chunkStore.delete(parsed.transferId);
+              onPayloadReceived(JSON.parse(fullStr));
+            }
+          }
+        } catch (e) {
+          console.error('Error parsing direct recipient MQTT message:', e);
+        }
+      };
+
+      directRecipientMqttClient.connect({
+        useSSL: true,
+        timeout: 10,
+        onSuccess: () => {
+          directRecipientMqttClient.subscribe(`tools/transfer/direct/${dlId}/res`);
+          
+          let reqInterval = setInterval(() => {
+            if (!directRecipientMqttClient || !directRecipientMqttClient.isConnected()) {
+              clearInterval(reqInterval);
+              return;
+            }
+            const reqMsg = new Paho.MQTT.Message(JSON.stringify({ type: 'req_direct_payload' }));
+            reqMsg.destinationName = `tools/transfer/direct/${dlId}/req`;
+            directRecipientMqttClient.send(reqMsg);
+          }, 1500);
+
+          setTimeout(() => clearInterval(reqInterval), 45000);
+        },
+        onFailure: (err) => {
+          console.warn('Direct MQTT recipient connect failed:', err);
+          const dlLoadingText = document.getElementById('dlLoadingText');
+          if (dlLoadingText) {
+            dlLoadingText.textContent = 'Buscando al emisor en la red local...';
+          }
+        }
+      });
+    }
+
+    // --- Check URL Parameters (Direct Download Mode for QR Scans) ---
+    function checkUrlReceivingMode() {
+      const params = new URLSearchParams(window.location.search);
+      const dlId = params.get('dl');
+      const exp = parseInt(params.get('exp') || '0', 10);
+      const hash = window.location.hash;
+
+      if (!dlId && !hash.startsWith('#text=')) {
+        return; // Normal sender / desktop mode
+      }
+
+      // WE ARE IN DIRECT DOWNLOAD MODE!
+      const hero = document.querySelector('.hero');
+      const mainSection = document.querySelector('.main-section');
+      if (hero) hero.style.display = 'none';
+      if (mainSection) mainSection.style.display = 'none';
+
+      const dlSection = document.getElementById('directDownloadView');
+      if (!dlSection) return;
+      dlSection.style.display = 'flex';
+
+      const dlExpiredBox = document.getElementById('dlExpiredBox');
+      const dlActiveBox = document.getElementById('dlActiveBox');
+      const dlCountdown = document.getElementById('dlCountdown');
+      const dlLoadingSpinner = document.getElementById('dlLoadingSpinner');
+      const dlContentArea = document.getElementById('dlContentArea');
+      const dlActions = document.getElementById('dlActions');
+      const btnDlPrimary = document.getElementById('btnDlPrimary');
+      const dlTitle = document.getElementById('dlTitle');
+      const dlSubtitle = document.getElementById('dlSubtitle');
+      const dlIcon = document.getElementById('dlIcon');
+
+      // Check Expiration (10 minutes)
+      if (exp > 0 && Date.now() > exp) {
+        dlExpiredBox.style.display = 'block';
+        dlActiveBox.style.display = 'none';
+        return;
+      }
+
+      dlExpiredBox.style.display = 'none';
+      dlActiveBox.style.display = 'block';
+
+      if (exp > 0) {
+        const dlTimer = setInterval(() => {
+          const rem = exp - Date.now();
+          if (rem <= 0) {
+            clearInterval(dlTimer);
+            dlExpiredBox.style.display = 'block';
+            dlActiveBox.style.display = 'none';
+            return;
+          }
+          const s = Math.floor(rem / 1000);
+          const m = Math.floor(s / 60);
+          const sec = s % 60;
+          dlCountdown.textContent = `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')} restantes`;
+        }, 1000);
+      }
+
+      // Instant text payload via hash
+      if (hash.startsWith('#text=')) {
+        const raw = hash.replace('#text=', '');
+        const decoded = decodeURIComponent(raw);
+        dlLoadingSpinner.style.display = 'none';
+        dlIcon.textContent = '📋';
+        dlTitle.textContent = 'Texto Compartido';
+        dlSubtitle.textContent = 'Texto recibido mediante código QR';
+
+        dlContentArea.style.display = 'block';
+        dlContentArea.innerHTML = `
+          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; font-family: 'Geist Mono', monospace; font-size: 13px; max-height: 260px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; color: var(--text-primary);">
+            ${escapeHtml(decoded)}
+          </div>
+        `;
+
+        dlActions.style.display = 'flex';
+        btnDlPrimary.innerHTML = `
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+          <span>Copiar texto al portapapeles</span>
+        `;
+        btnDlPrimary.onclick = () => {
+          navigator.clipboard.writeText(decoded).then(() => {
+            showToast('¡Texto copiado al portapapeles!', '📋');
+            playChime(true);
+          });
+        };
+        return;
+      }
+
+      // Files payload via dlId
+      if (dlId) {
+        let directReceived = false;
+
+        function handleReceived(payload) {
+          if (directReceived) return;
+          directReceived = true;
+          dlLoadingSpinner.style.display = 'none';
+
+          if (payload.type === 'text') {
+            dlIcon.textContent = '📋';
+            dlTitle.textContent = 'Texto Compartido';
+            dlSubtitle.textContent = 'Texto recibido mediante código QR';
+            dlContentArea.style.display = 'block';
+            dlContentArea.innerHTML = `
+              <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; font-family: 'Geist Mono', monospace; font-size: 13px; max-height: 260px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; color: var(--text-primary);">
+                ${escapeHtml(payload.text)}
+              </div>
+            `;
+            dlActions.style.display = 'flex';
+            btnDlPrimary.innerHTML = `<span>Copiar texto</span>`;
+            btnDlPrimary.onclick = () => {
+              navigator.clipboard.writeText(payload.text).then(() => {
+                showToast('¡Texto copiado!', '📋');
+                playChime(true);
               });
             };
-            reader.readAsDataURL(file);
-          });
-        });
+          } else if (payload.files && payload.files.length > 0) {
+            dlIcon.textContent = '📦';
+            const totalSize = payload.files.reduce((a, f) => a + (f.size || 0), 0);
+            dlTitle.textContent = `${payload.files.length} Archivo${payload.files.length > 1 ? 's' : ''} Listo${payload.files.length > 1 ? 's' : ''}`;
+            dlSubtitle.textContent = `Tamaño total: ${formatBytes(totalSize)}`;
 
-        const filePayloads = await Promise.all(filePromises);
+            dlContentArea.style.display = 'block';
+            dlContentArea.innerHTML = payload.files.map((f, i) => `
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 8px; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                  <span style="font-size: 18px;">📄</span>
+                  <div style="min-width: 0;">
+                    <div style="font-weight: 500; font-size: 13px; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(f.name)}">${escapeHtml(f.name)}</div>
+                    <div style="font-size: 11px; font-family: 'Geist Mono', monospace; color: var(--text-secondary);">${formatBytes(f.size)}</div>
+                  </div>
+                </div>
+                <button type="button" class="btn-secondary" onclick="window.triggerDirectDlItem(${i})" style="padding: 6px 12px; font-size: 12px; flex-shrink: 0;">
+                  ⬇️ Bajar
+                </button>
+              </div>
+            `).join('');
 
-        sendSignaling({
-          type: 'transfer_request',
-          from: myDeviceId,
-          to: receiverId,
-          senderName: myDeviceName,
-          senderIcon: myDeviceIcon,
-          payloadType: 'files',
-          files: filePayloads
+            window.triggerDirectDlItem = function(idx) {
+              const file = payload.files[idx];
+              if (file) {
+                triggerDownload(file.name, file.data);
+                showToast(`Descargando ${file.name}`, '📥');
+              }
+            };
+
+            dlActions.style.display = 'flex';
+            btnDlPrimary.innerHTML = `
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x1="12" y2="3"/></svg>
+              <span>Descargar archivos (${payload.files.length})</span>
+            `;
+            btnDlPrimary.onclick = () => {
+              payload.files.forEach((f, idx) => {
+                setTimeout(() => {
+                  triggerDownload(f.name, f.data);
+                }, idx * 250);
+              });
+              showToast(`Iniciando descarga de ${payload.files.length} archivo(s)...`, '📥');
+              playChime(true);
+            };
+          }
+        }
+
+        // 1. BroadcastChannel (local browser tabs)
+        try {
+          const bc = new BroadcastChannel('tools_direct_' + dlId);
+          bc.onmessage = (ev) => {
+            if (ev.data && ev.data.type === 'res_direct_payload') {
+              handleReceived(ev.data.payload);
+            }
+          };
+          bc.postMessage({ type: 'req_direct_payload' });
+        } catch (e) {}
+
+        // 2. Direct MQTT
+        initDirectRecipientMqtt(dlId, (payload) => {
+          handleReceived(payload);
         });
       }
     }
 
-    // --- Check URL Parameters (QR Receiver Mode) ---
-    function checkUrlReceivingMode() {
-      // 1. Text in URL hash
-      if (window.location.hash.startsWith('#text=')) {
-        const raw = window.location.hash.replace('#text=', '');
-        const decoded = decodeURIComponent(raw);
-        handleIncomingTransfer({
-          from: 'qr_sender',
-          senderName: 'Código QR',
-          senderIcon: '📱',
-          payloadType: 'text',
-          text: decoded
-        });
-        window.history.replaceState(null, '', window.location.pathname);
-      }
-
-      // 2. Direct peer query string (?receive=dev_xxx)
-      const params = new URLSearchParams(window.location.search);
-      const senderId = params.get('receive');
-      if (senderId) {
-        showToast('Conectando con el emisor del código QR...', '⏳');
-        setTimeout(() => {
-          sendSignaling({
-            type: 'request_qr_payload',
-            from: myDeviceId,
-            to: senderId
-          });
-        }, 1200);
+    // Handle sender response to direct MQTT request
+    function handleDirectSenderMqttMessage(topic, payloadString) {
+      if (!activeQrSessionId || !activeQrPayload) return;
+      if (Date.now() > activeQrExpiresAt) return;
+      if (topic === `tools/transfer/direct/${activeQrSessionId}/req`) {
+        sendDirectPayloadOverMqtt(`tools/transfer/direct/${activeQrSessionId}/res`, activeQrPayload);
       }
     }
+
+    // Hook direct MQTT handling into mqttClient message dispatcher
+    const originalOnMessageArrived = (message) => {
+      try {
+        const data = JSON.parse(message.payloadString);
+        handleSignaling(data);
+      } catch (err) {}
+    };
 
     // Initialize network, discovery and listeners
     initNetworkRoom();

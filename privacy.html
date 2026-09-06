@@ -73,6 +73,11 @@
       padding: 0;
     }
 
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
     body {
       background-color: var(--bg);
       color: var(--text-primary);
@@ -90,6 +95,8 @@
       left: 50%;
       transform: translateX(-50%);
       width: 700px;
+      max-width: 100vw;
+      overflow: hidden;
       height: 380px;
       background: radial-gradient(ellipse at center, rgba(212, 168, 67, 0.08) 0%, rgba(12, 12, 14, 0) 70%);
       pointer-events: none;
