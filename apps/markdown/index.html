@@ -1457,11 +1457,11 @@
     }
 
     .modal-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
+      background: #131316;
+      border: 1px solid #1E1E24;
+      border-radius: 12px;
       width: 100%;
-      max-width: 520px;
+      max-width: 448px;
       max-height: 90vh;
       display: flex;
       flex-direction: column;
@@ -1479,8 +1479,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
+      padding: 18px 22px;
+      border-bottom: 1px solid #1E1E24;
     }
 
     .modal-title-group {
@@ -1490,28 +1490,28 @@
     }
 
     .modal-icon {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       border-radius: var(--radius-sm);
-      background: var(--accent-dim);
+      background: rgba(212, 168, 67, 0.1);
       border: 1px solid rgba(212, 168, 67, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--accent);
-      font-size: 18px;
+      flex-shrink: 0;
     }
 
     .modal-title {
       font-size: 16px;
       font-weight: 600;
-      color: var(--text-primary);
+      color: #F2F2F0;
     }
 
     .modal-close-btn {
       background: transparent;
       border: none;
-      color: var(--text-secondary);
+      color: #8A8A94;
       padding: 6px;
       border-radius: var(--radius-sm);
       cursor: pointer;
@@ -1522,12 +1522,12 @@
     }
 
     .modal-close-btn:hover {
-      color: var(--text-primary);
-      background: var(--surface-hover);
+      color: #F2F2F0;
+      background: #1E1E24;
     }
 
     .modal-body {
-      padding: 24px;
+      padding: 20px 22px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -1541,7 +1541,7 @@
     }
 
     .form-label {
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 500;
       color: var(--text-primary);
     }
@@ -1557,8 +1557,8 @@
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      font-size: 13.5px;
+      padding: 9px 12px;
+      font-size: 12.5px;
       font-family: 'Geist Mono', monospace;
       color: var(--text-primary);
       outline: none;
@@ -1572,7 +1572,7 @@
 
     .btn-toggle-vis {
       position: absolute;
-      right: 12px;
+      right: 10px;
       background: transparent;
       border: none;
       color: var(--text-secondary);
@@ -1587,76 +1587,139 @@
       color: var(--text-primary);
     }
 
-    .form-help {
-      font-size: 11.5px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-
-    .form-help code {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      padding: 1px 4px;
-      border-radius: 3px;
-      color: var(--accent);
-      font-family: 'Geist Mono', monospace;
-    }
-
-    .form-help a {
-      color: var(--accent);
-      text-decoration: underline;
-    }
-
     .models-list-box {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      max-height: 180px;
+      max-height: 220px;
       overflow-y: auto;
       padding-right: 4px;
     }
 
-    .model-radio-item {
+    .model-select-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      border-radius: 8px;
       padding: 8px 12px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      font-family: 'Geist Mono', monospace;
       font-size: 12px;
+      font-family: 'Geist Mono', monospace;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 1px solid #1E1E24;
+      background: #0C0C0E;
+      color: #8A8A94;
+      user-select: none;
+    }
+
+    .model-select-item:hover:not(.selected) {
+      border-color: rgba(212, 168, 67, 0.35);
+      color: #F2F2F0;
+      background: #131316;
+    }
+
+    .model-select-item.selected {
+      border-color: rgba(212, 168, 67, 0.6);
+      background: rgba(212, 168, 67, 0.15);
+      color: #D4A843;
+      font-weight: 600;
+    }
+
+    .model-item-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      overflow: hidden;
+      padding-right: 8px;
+    }
+
+    .model-item-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #1E1E24;
+      flex-shrink: 0;
+      transition: background 0.15s ease;
+    }
+
+    .model-item-dot.selected {
+      background: #D4A843;
+    }
+
+    .model-item-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .model-item-badge {
+      font-size: 10px;
+      font-family: Geist, sans-serif;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(212, 168, 67, 0.2);
+      color: #D4A843;
+      flex-shrink: 0;
+      font-weight: 500;
+    }
+
+    .api-key-card {
+      border-radius: 8px;
+      border: 1px solid #1E1E24;
+      background: rgba(12, 12, 14, 0.7);
+      padding: 12px;
+      font-size: 12px;
+      margin-top: 16px;
+    }
+
+    .api-key-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #D4A843;
+      text-decoration: none;
+      flex-shrink: 0;
+      font-size: 11.5px;
       transition: var(--transition);
     }
 
-    .model-radio-item:hover {
-      border-color: var(--border-accent);
-      background: var(--surface-hover);
+    .api-key-link:hover {
+      text-decoration: underline;
     }
 
-    .model-radio-item.selected {
-      border-color: var(--accent);
-      background: var(--accent-dim);
-      color: var(--accent);
-      font-weight: 600;
+    .api-key-direct-details {
+      margin-top: 10px;
+      border-top: 1px dashed #1E1E24;
+      padding-top: 8px;
+    }
+
+    .api-key-direct-summary {
+      font-size: 11px;
+      color: #8A8A94;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.15s ease;
+    }
+
+    .api-key-direct-summary:hover {
+      color: #D4A843;
     }
 
     .modal-actions {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 10px;
-      margin-top: 10px;
+      gap: 12px;
+      margin-top: 20px;
       padding-top: 16px;
-      border-top: 1px solid var(--border);
+      border-top: 1px solid #1E1E24;
     }
 
     .btn-secondary {
-      background: var(--surface-hover);
-      border: 1px solid var(--border);
-      color: var(--text-primary);
+      background: #1E1E24;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: #8A8A94;
       padding: 8px 16px;
       border-radius: var(--radius-sm);
       font-size: 13px;
@@ -1666,7 +1729,8 @@
     }
 
     .btn-secondary:hover {
-      background: var(--surface-active);
+      background: #27272A;
+      color: #F2F2F0;
     }
 
     .btn-primary {
@@ -2150,15 +2214,27 @@
     </aside>
   </main>
 
-  <!-- Modal de Ajustes (OpenRouter & Modelos) -->
+  <!-- Modal de Ajustes (Modelos OpenRouter e IA sincronizados con la Suite) -->
   <div class="modal-backdrop" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-card">
       <div class="modal-header">
         <div class="modal-title-group">
-          <div class="modal-icon">⚙️</div>
+          <div class="modal-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"/>
+              <line x1="4" y1="10" x2="4" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="12"/>
+              <line x1="12" y1="8" x2="12" y2="3"/>
+              <line x1="20" y1="21" x2="20" y2="16"/>
+              <line x1="20" y1="12" x2="20" y2="3"/>
+              <line x1="1" y1="14" x2="7" y2="14"/>
+              <line x1="9" y1="8" x2="15" y2="8"/>
+              <line x1="17" y1="16" x2="23" y2="16"/>
+            </svg>
+          </div>
           <div>
-            <div class="modal-title" id="modalTitle">Ajustes de Inteligencia Artificial</div>
-            <div style="font-size: 11.5px; color: var(--text-secondary);">Configuración de OpenRouter para la suite</div>
+            <div class="modal-title" id="modalTitle">Ajustes de Markdown Editor</div>
+            <div style="font-size: 11.5px; color: #8A8A94;">Modelos de IA y asistente contextual</div>
           </div>
         </div>
         <button class="modal-close-btn" id="closeSettingsBtn" aria-label="Cerrar modal">
@@ -2171,66 +2247,72 @@
 
       <div class="modal-body">
         <form id="settingsForm">
-          <!-- API Key Input -->
-          <div class="form-group">
-            <label class="form-label" for="apiKeyInput">OpenRouter API Key</label>
-            <div class="input-wrapper">
-              <input
-                type="password"
-                id="apiKeyInput"
-                class="form-input"
-                placeholder="sk-or-v1-..."
-                autocomplete="off"
-                spellcheck="false"
-              />
-              <button type="button" class="btn-toggle-vis" id="toggleApiKeyVis" title="Mostrar/ocultar clave">
-                <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                  <circle cx="12" cy="12" r="3"/>
-                </svg>
-              </button>
+          <!-- Selección de Modelo Activo (idéntico a Códigos AR) -->
+          <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <label style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #8A8A94;">
+                Modelo de IA Activo
+              </label>
+              <a href="../../index.html" class="api-key-link" title="Administrar modelos en el Inicio de Tools Suite">
+                <span>Administrar en Inicio</span>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
             </div>
-            <p class="form-help">
-              Se guarda localmente en <code>localStorage</code> (<code>codigos_ar_openrouter_key</code>) y se comparte con Códigos AR. Consíguela en <a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer">openrouter.ai/keys ↗</a>.
-            </p>
-          </div>
 
-          <!-- Selección y Administración de Modelos -->
-          <div class="form-group" style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-              <label class="form-label">Modelo Activo para Markdown</label>
-              <span style="font-size: 11px; font-family: 'Geist Mono', monospace; color: var(--accent);" id="modelsCountBadge">0 modelos</span>
-            </div>
-            <p class="form-help" style="margin-bottom: 8px;">
-              Selecciona el modelo que procesará las consultas del chat y analizará tu archivo.
-            </p>
             <div class="models-list-box" id="modelsListBox">
-              <!-- Render dinámico de modelos guardados -->
+              <!-- Render dinámico de modelos guardados (codigos_ar_saved_models) -->
             </div>
+
+            <p style="font-size: 11px; color: rgba(138, 138, 148, 0.8); margin-top: 8px; line-height: 1.5;">
+              Para agregar nuevos modelos o remover existentes, usá los Ajustes de la página principal.
+            </p>
           </div>
 
-          <!-- Agregar nuevo modelo -->
-          <div class="form-group" style="margin-top: 8px;">
-            <label class="form-label" for="newModelInput" style="font-size: 11.5px; color: var(--text-secondary);">Agregar nuevo ID de modelo OpenRouter</label>
-            <div style="display: flex; gap: 8px;">
-              <input
-                type="text"
-                id="newModelInput"
-                class="form-input"
-                placeholder="ej: anthropic/claude-3.5-sonnet"
-                autocomplete="off"
-                spellcheck="false"
-                style="padding: 7px 12px; font-size: 12px;"
-              />
-              <button type="button" class="btn-secondary" id="btnAddModel" style="white-space: nowrap; color: var(--accent); border-color: rgba(212, 168, 67, 0.4); font-size: 12px;">
-                + Agregar
-              </button>
+          <!-- Estado de OpenRouter API Key (idéntico a Códigos AR) -->
+          <div class="api-key-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+                <span id="apiKeyStatusIcon" style="display: flex; align-items: center; flex-shrink: 0;"></span>
+                <span style="color: #8A8A94; font-size: 12px;">
+                  OpenRouter API Key: <strong id="apiKeyStatusLabel">No configurada</strong>
+                </span>
+              </div>
+              <a href="../../index.html" id="apiKeyStatusLink" class="api-key-link" title="Configurar clave en el Inicio de Tools Suite">
+                <span id="apiKeyActionText">Configurar en Inicio</span>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
             </div>
+
+            <!-- Entrada opcional directa para conveniencia sin salir de la app -->
+            <details class="api-key-direct-details" id="apiKeyDetails">
+              <summary class="api-key-direct-summary">
+                <span>¿Deseas ingresar la clave aquí directamente?</span>
+              </summary>
+              <div class="input-wrapper" style="margin-top: 8px;">
+                <input
+                  type="password"
+                  id="apiKeyInput"
+                  class="form-input"
+                  placeholder="sk-or-v1-..."
+                  autocomplete="off"
+                  spellcheck="false"
+                  style="padding-right: 36px; font-size: 12px;"
+                />
+                <button type="button" class="btn-toggle-vis" id="toggleApiKeyVis" title="Mostrar/ocultar clave" style="right: 8px;">
+                  <svg id="eyeIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </button>
+              </div>
+            </details>
           </div>
 
           <div class="modal-actions">
             <button type="button" class="btn-secondary" id="cancelSettingsBtn">Cancelar</button>
-            <button type="submit" class="btn-primary" id="saveSettingsBtn">Guardar cambios</button>
+            <button type="submit" class="btn-primary" id="saveSettingsBtn" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 20px;">
+              Guardar ajustes
+            </button>
           </div>
         </form>
       </div>
@@ -2379,10 +2461,8 @@ saludar("Lautaro");
       const toggleApiKeyVis = document.getElementById('toggleApiKeyVis');
       const eyeIcon = document.getElementById('eyeIcon');
       const modelsListBox = document.getElementById('modelsListBox');
-      const modelsCountBadge = document.getElementById('modelsCountBadge');
-      const newModelInput = document.getElementById('newModelInput');
-      const btnAddModel = document.getElementById('btnAddModel');
       const headerKeyDot = document.getElementById('headerKeyDot');
+      let tempSelectedModel = null;
 
       // Apps Popover
       const appsMenuBtn = document.getElementById('appsMenuBtn');
@@ -3160,95 +3240,112 @@ ${text}`;
       }
 
       // ==========================================
-      // MODAL DE AJUSTES (OPENROUTER & MODELOS)
+      // MODAL DE AJUSTES (OPENROUTER & MODELOS IDÉNTICO A CÓDIGOS AR)
       // ==========================================
       window.openSettingsModal = function() {
-        apiKeyInput.value = getApiKey();
+        tempSelectedModel = getActiveModel();
+        updateApiKeyStatusDisplay();
         renderSettingsModels();
         settingsModal.classList.add('show');
-        apiKeyInput.focus();
       };
 
       function closeSettingsModal() {
         settingsModal.classList.remove('show');
       }
 
+      function updateApiKeyStatusDisplay() {
+        const key = getApiKey();
+        const hasKey = Boolean(key && key.trim());
+        const statusIcon = document.getElementById('apiKeyStatusIcon');
+        const statusLabel = document.getElementById('apiKeyStatusLabel');
+        const actionText = document.getElementById('apiKeyActionText');
+
+        if (statusIcon) {
+          statusIcon.innerHTML = hasKey 
+            ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+            : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+        }
+        if (statusLabel) {
+          statusLabel.textContent = hasKey ? 'Configurada' : 'No configurada';
+          statusLabel.style.color = hasKey ? '#34d399' : '#fbbf24';
+        }
+        if (actionText) {
+          actionText.textContent = hasKey ? 'Gestionar en Inicio' : 'Configurar en Inicio';
+        }
+        if (apiKeyInput) {
+          apiKeyInput.value = key;
+        }
+      }
+
       function renderSettingsModels() {
         const savedModels = getSavedModels();
-        const activeModel = getActiveModel();
-        modelsCountBadge.textContent = `${savedModels.length} modelo${savedModels.length === 1 ? '' : 's'}`;
+        const activeModel = tempSelectedModel || getActiveModel();
+
+        if (!savedModels || savedModels.length === 0) {
+          modelsListBox.innerHTML = `
+            <div style="border-radius: 8px; border: 1px dashed #1E1E24; background: #0C0C0E; padding: 16px; text-align: center;">
+              <p style="font-size: 12px; color: #8A8A94; margin-bottom: 8px;">No tenés modelos guardados aún.</p>
+              <a href="../../index.html" class="api-key-link" style="text-decoration: underline; font-weight: 500; font-size: 12px;">
+                <span>Agregar modelos en los Ajustes del Inicio</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
+            </div>
+          `;
+          return;
+        }
 
         modelsListBox.innerHTML = savedModels.map(m => {
           const isSelected = m === activeModel;
           const safeModel = escapeHtml(m);
           return `
-            <div class="model-radio-item ${isSelected ? 'selected' : ''}" data-model="${safeModel}">
-              <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
-                <span style="width: 8px; height: 8px; border-radius: 50%; background: ${isSelected ? 'var(--accent)' : 'var(--border)'}; flex-shrink: 0;"></span>
-                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${safeModel}</span>
+            <div class="model-select-item ${isSelected ? 'selected' : ''}" data-model="${safeModel}">
+              <div class="model-item-left">
+                <span class="model-item-dot ${isSelected ? 'selected' : ''}"></span>
+                <span class="model-item-name" title="${safeModel}">${safeModel}</span>
               </div>
-              <div style="display: flex; align-items: center; gap: 6px;">
-                ${isSelected ? '<span style="font-size: 10px; color: var(--accent);">Activo</span>' : ''}
-                ${savedModels.length > 1 ? `
-                  <button type="button" class="btn-doc-action danger" data-action="remove-model" data-model="${safeModel}" title="Eliminar modelo">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                  </button>
-                ` : ''}
-              </div>
+              ${isSelected ? '<span class="model-item-badge">Activo</span>' : ''}
             </div>
           `;
         }).join('');
 
-        // Eventos de selección y eliminación
-        modelsListBox.querySelectorAll('.model-radio-item').forEach(item => {
-          item.addEventListener('click', (e) => {
-            if (e.target.closest('[data-action="remove-model"]')) return;
-            const chosen = item.getAttribute('data-model');
-            localStorage.setItem(STORAGE_KEY_ACTIVE_MODEL, chosen);
+        modelsListBox.querySelectorAll('.model-select-item').forEach(item => {
+          item.addEventListener('click', () => {
+            tempSelectedModel = item.getAttribute('data-model');
             renderSettingsModels();
           });
         });
-
-        modelsListBox.querySelectorAll('[data-action="remove-model"]').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const modelToRemove = btn.getAttribute('data-model');
-            let list = getSavedModels().filter(m => m !== modelToRemove);
-            if (list.length === 0) list = [...DEFAULT_MODELS];
-            localStorage.setItem(STORAGE_KEY_SAVED_MODELS, JSON.stringify(list));
-
-            if (getActiveModel() === modelToRemove) {
-              localStorage.setItem(STORAGE_KEY_ACTIVE_MODEL, list[0]);
-            }
-            renderSettingsModels();
-          });
-        });
-      }
-
-      function handleAddNewModel() {
-        const val = newModelInput.value.trim();
-        if (!val) return;
-
-        const list = getSavedModels();
-        if (!list.includes(val)) {
-          list.push(val);
-          localStorage.setItem(STORAGE_KEY_SAVED_MODELS, JSON.stringify(list));
-          localStorage.setItem(STORAGE_KEY_ACTIVE_MODEL, val); // Se activa de inmediato
-        }
-
-        newModelInput.value = '';
-        renderSettingsModels();
-        showToast(`Modelo "${val}" agregado y activado`);
       }
 
       function handleSaveSettings(e) {
-        e.preventDefault();
-        const keyVal = apiKeyInput.value.trim();
-        localStorage.setItem(STORAGE_KEY_API_KEY, keyVal);
+        if (e) e.preventDefault();
 
-        closeSettingsModal();
-        updateChatContextBanner();
-        showToast('Ajustes de Inteligencia Artificial guardados');
+        if (tempSelectedModel) {
+          localStorage.setItem(STORAGE_KEY_ACTIVE_MODEL, tempSelectedModel);
+        }
+
+        if (apiKeyInput) {
+          const directKey = apiKeyInput.value.trim();
+          if (directKey !== getApiKey()) {
+            localStorage.setItem(STORAGE_KEY_API_KEY, directKey);
+          }
+        }
+
+        const originalHtml = saveSettingsBtn.innerHTML;
+        saveSettingsBtn.innerHTML = `
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Guardado
+        `;
+        saveSettingsBtn.style.background = '#059669';
+        saveSettingsBtn.style.color = '#ffffff';
+
+        setTimeout(() => {
+          saveSettingsBtn.innerHTML = originalHtml;
+          saveSettingsBtn.style.background = '';
+          saveSettingsBtn.style.color = '';
+          closeSettingsModal();
+          updateChatContextBanner();
+          showToast(tempSelectedModel ? `Modelo activo: ${tempSelectedModel.split('/')[1] || tempSelectedModel}` : 'Ajustes guardados');
+        }, 500);
       }
 
       // ==========================================
@@ -3417,13 +3514,6 @@ ${text}`;
           }
         });
         settingsForm.addEventListener('submit', handleSaveSettings);
-        btnAddModel.addEventListener('click', handleAddNewModel);
-        newModelInput.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            handleAddNewModel();
-          }
-        });
 
         // Mostrar / Ocultar API Key
         toggleApiKeyVis.addEventListener('click', () => {
