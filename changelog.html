@@ -482,7 +482,7 @@
         </a>
 
         <div class="header-actions">
-          <div class="header-badge">v1.3 · Tools Suite</div>
+          <div class="header-badge">v1.4 · Tools Suite</div>
 
           <!-- Apps Popover Dropdown (House Icon) -->
           <div class="apps-dropdown-wrapper">
@@ -520,6 +520,20 @@
                 <div class="apps-item-info">
                   <div class="apps-item-title">Markdown Editor</div>
                   <div class="apps-item-desc">Editor, visor y chat IA</div>
+                </div>
+              </a>
+              <a href="./apps/pdf-markdown/index.html" class="apps-dropdown-item" role="menuitem">
+                <div class="apps-item-icon">📑</div>
+                <div class="apps-item-info">
+                  <div class="apps-item-title">PDF a Markdown</div>
+                  <div class="apps-item-desc">Extracción y formato LLM</div>
+                </div>
+              </a>
+              <a href="./apps/web-markdown/index.html" class="apps-dropdown-item" role="menuitem">
+                <div class="apps-item-icon">🌐</div>
+                <div class="apps-item-info">
+                  <div class="apps-item-title">Website a Markdown</div>
+                  <div class="apps-item-desc">Reader y limpieza IA</div>
                 </div>
               </a>
               <a href="./apps/transfer/index.html" class="apps-dropdown-item" role="menuitem">
@@ -563,12 +577,43 @@
         <div class="last-updated">Historial cronológico de versiones y novedades de Tools Suite</div>
 
         <div class="timeline">
-          <!-- Versión 1.3.0 -->
+          <!-- Versión 1.4.0 -->
           <div class="version-card highlight">
             <div class="version-header">
               <div class="version-title-group">
-                <span class="version-tag">v1.3.0</span>
+                <span class="version-tag">v1.4.0</span>
                 <span class="version-badge">Actual</span>
+              </div>
+              <span class="version-date">Septiembre 2026</span>
+            </div>
+            <p class="version-desc">
+              Lanzamiento de dos nuevas aplicaciones especializadas para flujos con Inteligencia Artificial (<strong>PDF a Markdown</strong> y <strong>Website a Markdown</strong>) listas para LLMs y RAG, junto con el refuerzo de seguridad y centralización estricta de API keys en la suite.
+            </p>
+            <ul class="change-list">
+              <li class="change-item">
+                <span class="change-bullet"></span>
+                <span><span class="change-category">PDF a Markdown</span> Nuevo módulo (<code style="font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--accent);">tools/apps/pdf-markdown/</code>) con extracción client-side 100% local mediante PDF.js (el binario no abandona el dispositivo), selector de rangos de páginas, pulido con OpenRouter (limpieza de cortes de línea, tablas GFM y metadatos frontmatter YAML) y pestaña interactiva para comparar lado a lado texto crudo vs. Markdown procesado.</span>
+              </li>
+              <li class="change-item">
+                <span class="change-bullet"></span>
+                <span><span class="change-category">Website a Markdown</span> Nueva herramienta (<code style="font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--accent);">tools/apps/web-markdown/</code>) con motor Jina Reader (<code style="font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--accent);">r.jina.ai</code>), fallback local de parseo HTML con Turndown para contenido autenticado, métricas en tiempo real (palabras, caracteres y tokens estimados) y refinamiento contextual con IA.</span>
+              </li>
+              <li class="change-item">
+                <span class="change-bullet"></span>
+                <span><span class="change-category">Seguridad & Credenciales</span> Retiro definitivo de la opción de ingreso directo de API Key en los ajustes de Markdown Editor, consolidando la gestión segura y centralizada de credenciales OpenRouter exclusivamente en el inicio de Tools Suite vía <code style="font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--accent);">localStorage</code>.</span>
+              </li>
+              <li class="change-item">
+                <span class="change-bullet"></span>
+                <span><span class="change-category">Catálogo & SEO</span> Integración de 8 módulos totales en la Home, actualización de metadatos Schema.org JSON-LD, sitemap XML y menús desplegables de navegación de la suite.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Versión 1.3.0 -->
+          <div class="version-card">
+            <div class="version-header">
+              <div class="version-title-group">
+                <span class="version-tag">v1.3.0</span>
               </div>
               <span class="version-date">Septiembre 2026</span>
             </div>

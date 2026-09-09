@@ -87,6 +87,22 @@
           "url": "https://finanzar-delta.vercel.app",
           "applicationCategory": "FinanceApplication",
           "description": "Herramienta de finanzas personales para gestionar ingresos, gastos y presupuestos."
+        },
+        {
+          "@type": "SoftwareApplication",
+          "position": 7,
+          "name": "PDF a Markdown",
+          "url": "https://lautaro005.github.io/tools/apps/pdf-markdown/",
+          "applicationCategory": "ProductivityApplication",
+          "description": "Extracción local de documentos PDF con PDF.js y optimización semántica para LLMs con OpenRouter."
+        },
+        {
+          "@type": "SoftwareApplication",
+          "position": 8,
+          "name": "Website a Markdown",
+          "url": "https://lautaro005.github.io/tools/apps/web-markdown/",
+          "applicationCategory": "ProductivityApplication",
+          "description": "Extracción de contenido web con Jina Reader, fallback para HTML crudo y refinamiento con IA."
         }
       ]
     }
@@ -923,6 +939,20 @@
                   <div class="apps-item-desc">AirDrop local & QR</div>
                 </div>
               </a>
+              <a href="./apps/pdf-markdown/index.html" class="apps-dropdown-item" role="menuitem">
+                <div class="apps-item-icon">📑</div>
+                <div class="apps-item-info">
+                  <div class="apps-item-title">PDF a Markdown</div>
+                  <div class="apps-item-desc">Extracción y formato LLM</div>
+                </div>
+              </a>
+              <a href="./apps/web-markdown/index.html" class="apps-dropdown-item" role="menuitem">
+                <div class="apps-item-icon">🌐</div>
+                <div class="apps-item-info">
+                  <div class="apps-item-title">Website a Markdown</div>
+                  <div class="apps-item-desc">Reader y limpieza IA</div>
+                </div>
+              </a>
               <a href="./apps/fondo/index.html" class="apps-dropdown-item" role="menuitem">
                 <div class="apps-item-icon">🪄</div>
                 <div class="apps-item-info">
@@ -976,7 +1006,7 @@
     <div class="container">
       <div class="gallery-header">
         <span class="gallery-heading">Catálogo de Aplicaciones</span>
-        <span class="gallery-count">6 módulos</span>
+        <span class="gallery-count">8 módulos</span>
       </div>
 
       <div class="apps-grid">
@@ -1093,7 +1123,53 @@
           </div>
         </a>
 
-        <!-- App 6: FinanzAR (LIVE) -->
+        <!-- App 6: PDF a Markdown (LIVE) -->
+        <a href="./apps/pdf-markdown/index.html" class="app-card">
+          <div>
+            <div class="app-card-top">
+              <div class="app-icon" role="img" aria-label="Documento PDF a Markdown">📑</div>
+              <span class="app-status status-live">● Disponible</span>
+            </div>
+            <h2 class="app-title">PDF a Markdown — Extracción & LLM Ready</h2>
+            <p class="app-desc">
+              Convierte documentos PDF a texto Markdown limpio directamente en tu dispositivo con PDF.js y optimiza títulos, tablas y metadatos YAML con IA (OpenRouter) para LLMs y RAG.
+            </p>
+          </div>
+          <div class="app-footer">
+            <div class="app-tags">
+              <span class="tag">PDF.js</span>
+              <span class="tag">Local</span>
+              <span class="tag">Markdown</span>
+              <span class="tag">OpenRouter</span>
+              <span class="tag">LLM Ready</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- App 7: Website a Markdown (LIVE) -->
+        <a href="./apps/web-markdown/index.html" class="app-card">
+          <div>
+            <div class="app-card-top">
+              <div class="app-icon" role="img" aria-label="Globo terráqueo Website a Markdown">🌐</div>
+              <span class="app-status status-live">● Disponible</span>
+            </div>
+            <h2 class="app-title">Website a Markdown — Reader & LLM</h2>
+            <p class="app-desc">
+              Scraping y extracción limpia de artículos o páginas web en Markdown vía Jina Reader, fallback para HTML crudo y refinamiento con IA para eliminar banners y cookies.
+            </p>
+          </div>
+          <div class="app-footer">
+            <div class="app-tags">
+              <span class="tag">Jina Reader</span>
+              <span class="tag">HTML a MD</span>
+              <span class="tag">Limpieza IA</span>
+              <span class="tag">OpenRouter</span>
+              <span class="tag">LLM Ready</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- App 8: FinanzAR (LIVE) -->
         <a href="https://finanzar-delta.vercel.app" target="_blank" rel="noreferrer" class="app-card">
           <div>
             <div class="app-card-top">

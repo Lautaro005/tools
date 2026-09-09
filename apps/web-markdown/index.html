@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Website a Markdown · Jina Reader & Optimización LLM</title>
+  <meta name="description" content="Convierte cualquier sitio web o código HTML a Markdown limpio y optimizado para LLMs con Jina Reader, Turndown y refinamiento con IA de OpenRouter." />
+  <link rel="canonical" href="https://lautaro005.github.io/tools/apps/web-markdown/" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4A843' stroke-width='2'><circle cx='12' cy='12' r='10'/><line x1='2' y1='12' x2='22' y2='12'/><path d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'/></svg>" />
+
+  <!-- Open Graph / Meta -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Website a Markdown · Tools Suite" />
+  <meta property="og:description" content="Extracción de artículos y páginas web a Markdown limpio listo para LLMs usando Jina Reader y pulido inteligente con OpenRouter." />
+  <meta property="og:url" content="https://lautaro005.github.io/tools/apps/web-markdown/" />
+  <meta property="og:locale" content="es_AR" />
+
+  <!-- Fonts & Syntax Highlighting -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+
+  <!-- Turndown, Marked & Highlight.js -->
+  <script src="https://cdn.jsdelivr.net/npm/turndown/dist/turndown.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0C0C0E;
+      --surface: #131316;
+      --surface-hover: #18181D;
+      --surface-active: #22222A;
+      --border: #1E1E24;
+      --border-accent: rgba(212, 168, 67, 0.35);
+      --text-primary: #F2F2F0;
+      --text-secondary: #8A8A94;
+      --accent: #D4A843;
+      --accent-dim: rgba(212, 168, 67, 0.12);
+      --accent-hover: #c39736;
+      --danger: #ef4444;
+      --danger-dim: rgba(239, 68, 68, 0.15);
+      --success: #10b981;
+      --success-dim: rgba(16, 185, 129, 0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+      min-height: 100vh;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient background glow */
+    .ambient-glow {
+      position: fixed;
+      top: -140px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      max-width: 100vw;
+      height: 380px;
+      background: radial-gradient(ellipse at center, rgba(212, 168, 67, 0.08) 0%, rgba(12, 12, 14, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Standard Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(12, 12, 14, 0.9);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      height: 60px;
+      display: flex;
+      align-items: center;
+    }
+
+    .container-header {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: var(--accent);
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-title span {
+      color: var(--accent);
+      margin: 0 1px;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .btn-header:hover {
+      border-color: var(--border-accent);
+      background: var(--surface-hover);
+      color: var(--accent);
+    }
+
+    .status-dot-key {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #71717A;
+      display: inline-block;
+    }
+
+    .status-dot-key.configured {
+      background: var(--success);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Apps Popover Dropdown */
+    .apps-dropdown-wrapper {
+      position: relative;
+    }
+
+    .apps-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 270px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 6px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+    }
+
+    .apps-dropdown-menu.show {
+      display: flex;
+    }
+
+    .apps-dropdown-header {
+      padding: 8px 10px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+
+    .apps-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 13px;
+      transition: var(--transition);
+    }
+
+    .apps-dropdown-item:hover {
+      background: var(--surface-hover);
+      color: var(--accent);
+    }
+
+    .apps-dropdown-item.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    .apps-item-icon {
+      font-size: 16px;
+      width: 24px;
+      text-align: center;
+    }
+
+    .apps-item-title {
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .apps-item-desc {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 20px 48px;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .app-hero {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid var(--border-accent);
+      padding: 3px 9px;
+      border-radius: 999px;
+      width: fit-content;
+    }
+
+    .hero-title {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      max-width: 820px;
+    }
+
+    /* Workflow Grid */
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .workflow-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Cards */
+    .panel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(12, 12, 14, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Mode selector tabs */
+    .mode-pills {
+      display: flex;
+      gap: 6px;
+      background: rgba(12, 12, 14, 0.5);
+      border: 1px solid var(--border);
+      padding: 3px;
+      border-radius: var(--radius-sm);
+    }
+
+    .mode-pill {
+      flex: 1;
+      text-align: center;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .mode-pill.active {
+      background: var(--surface-hover);
+      color: var(--accent);
+    }
+
+    /* Form input styles */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+    }
+
+    .url-bar {
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-text {
+      flex: 1;
+      background: #0C0C0E;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text-primary);
+      font-size: 13px;
+      font-family: 'Geist Mono', monospace;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .input-text:focus {
+      border-color: var(--accent);
+    }
+
+    .html-textarea {
+      width: 100%;
+      height: 150px;
+      background: #0C0C0E;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      color: var(--text-primary);
+      font-family: 'Geist Mono', monospace;
+      font-size: 12.5px;
+      resize: vertical;
+      outline: none;
+    }
+
+    .html-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: var(--accent);
+      color: #0C0C0E;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      border-color: var(--border-accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    .btn-header:active {
+      transform: scale(0.97);
+    }
+
+    .tab-btn:active,
+    .mode-pill:active {
+      transform: scale(0.96);
+    }
+
+    /* Spinner (loading state) */
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(212, 168, 67, 0.25);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Toast semantic variants */
+    .toast.toast-success {
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .toast.toast-error {
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    /* Respect reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+      .btn-primary:hover:not(:disabled),
+      .btn-secondary:hover:not(:disabled),
+      .btn-primary:active:not(:disabled),
+      .btn-secondary:active:not(:disabled),
+      .btn-header:active,
+      .tab-btn:active,
+      .mode-pill:active {
+        transform: none !important;
+      }
+    }
+
+    /* AI Polishing Box */
+    .ai-box {
+      border: 1px solid var(--border-accent);
+      background: rgba(212, 168, 67, 0.03);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ai-box-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .ai-box-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ai-box-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .ai-key-notice {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: #0C0C0E;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 11.5px;
+    }
+
+    .api-key-link {
+      color: var(--accent);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 500;
+    }
+
+    .api-key-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Editor and Output Area */
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      background: rgba(12, 12, 14, 0.4);
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .tab-btn.active {
+      background: var(--surface-hover);
+      color: var(--accent);
+    }
+
+    .editor-container {
+      min-height: 480px;
+      height: 540px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .editor-textarea {
+      width: 100%;
+      height: 100%;
+      background: #0C0C0E;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      color: var(--text-primary);
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      resize: none;
+      outline: none;
+      transition: var(--transition);
+      white-space: pre-wrap;
+    }
+
+    .editor-textarea:focus {
+      border-color: var(--border-accent);
+    }
+
+    .preview-rendered {
+      display: none;
+      width: 100%;
+      height: 100%;
+      background: #0C0C0E;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .preview-rendered.visible {
+      display: block;
+    }
+
+    .preview-rendered h1, .preview-rendered h2, .preview-rendered h3, .preview-rendered h4 {
+      color: #FFF;
+      margin-top: 1.2em;
+      margin-bottom: 0.6em;
+      font-weight: 600;
+    }
+    .preview-rendered h1 { font-size: 1.6em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+    .preview-rendered h2 { font-size: 1.3em; border-bottom: 1px solid var(--border); padding-bottom: 0.2em; }
+    .preview-rendered p { margin-bottom: 1em; color: var(--text-primary); }
+    .preview-rendered ul, .preview-rendered ol { margin-left: 1.5em; margin-bottom: 1em; }
+    .preview-rendered code {
+      font-family: 'Geist Mono', monospace;
+      background: var(--surface);
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      border: 1px solid var(--border);
+      color: var(--accent);
+    }
+    .preview-rendered pre {
+      background: #09090b;
+      border: 1px solid var(--border);
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      margin-bottom: 1em;
+    }
+    .preview-rendered pre code {
+      background: transparent;
+      padding: 0;
+      border: none;
+      color: inherit;
+    }
+    .preview-rendered table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.2em;
+      font-size: 13px;
+    }
+    .preview-rendered th, .preview-rendered td {
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .preview-rendered th {
+      background: var(--surface);
+      color: var(--accent);
+    }
+    .preview-rendered blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 1em;
+      font-style: italic;
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 11.5px;
+      font-family: 'Geist Mono', monospace;
+      color: var(--text-secondary);
+      padding: 6px 10px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 120;
+      padding: 20px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      width: 100%;
+      max-width: 460px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      display: flex;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .models-list-box {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #0C0C0E;
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .model-item {
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: 'Geist Mono', monospace;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-secondary);
+      border: 1px solid transparent;
+      transition: var(--transition);
+    }
+
+    .model-item:hover {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+    }
+
+    .model-item.active {
+      background: var(--accent-dim);
+      border-color: var(--border-accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: #18181D;
+      border: 1px solid var(--border-accent);
+      color: var(--text-primary);
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      background: #0C0C0E;
+      padding: 24px 20px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="container-header">
+      <a href="../../index.html" class="brand">
+        <div class="brand-icon" role="img" aria-label="Website a Markdown">🌐</div>
+        <div class="brand-title">web<span>·</span>markdown</div>
+        <span class="brand-sub">reader & llm</span>
+      </a>
+
+      <div class="header-actions">
+        <!-- Apps Popover Dropdown -->
+        <div class="apps-dropdown-wrapper">
+          <button class="btn-header" id="appsMenuBtn" aria-expanded="false" aria-haspopup="true" title="Menú de aplicaciones">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"/>
+              <rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/>
+              <rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            <span>Apps</span>
+          </button>
+          <div class="apps-dropdown-menu" id="appsMenu" role="menu">
+            <div class="apps-dropdown-header">Aplicaciones de la suite</div>
+            <a href="../../index.html" class="apps-dropdown-item" role="menuitem">
+              <div class="apps-item-icon">⚡</div>
+              <div class="apps-item-info">
+                <div class="apps-item-title">Tools Suite</div>
+                <div class="apps-item-desc">Catálogo principal</div>
+              </div>
+            </a>
+            <a href="../codigos/index.html" class="apps-dropdown-item" role="menuitem">
+              <div class="apps-item-icon">⚖️</div>
+              <div class="apps-item-info">
+                <div class="apps-item-title">Códigos AR</div>
+                <div class="apps-item-desc">Normativa legal e IA</div>
+              </div>
+            </a>
+            <a href="../citas/index.html" class="apps-dropdown-item" role="menuitem">
+              <div class="apps-item-icon">📖</div>
+              <div class="apps-item-info">
+                <div class="apps-item-title">Citas APA</div>
+                <div class="apps-item-desc">Generador bibliográfico</div>
+              </div>
+            </a>
+            <a href="../markdown/index.html" class="apps-dropdown-item" role="menuitem">
+              <div class="apps-item-icon">📝</div>
+              <div class="apps-item-info">
+                <div class="apps-item-title">Markdown Editor</div>
+                <div class="apps-item-desc">Editor, visor y chat IA</div>
+              </div>
+            </a>
+            <a href="../pdf-markdown/index.html" class="apps-dropdown-item" role="menuitem">
+              <div class="apps-item-icon">📑</div>
+              <div class="apps-item-info">
+                <div class="apps-item-title">PDF a Markdown</div>
+                <div class="apps-item-desc">Extracción y formato LLM</div>
+              </div>
+            </a>
+            <a href="./index.html" class="apps-dropdown-item active" role="menuitem">
+              <div class="apps-item-icon">🌐</div>
+              <div class="apps-item-info">
+                <div class="apps-item-title">Website a Markdown</div>
+                <div class="apps-item-desc">Reader y limpieza IA</div>
+              </div>
+            </a>
+            <a href="../transfer/index.html" class="apps-dropdown-item" role="menuitem">
+              <div class="apps-item-icon">📡</div>
+              <div class="apps-item-info">
+                <div class="apps-item-title">Transfer</div>
+                <div class="apps-item-desc">AirDrop local & QR</div>
+              </div>
+            </a>
+            <a href="../fondo/index.html" class="apps-dropdown-item" role="menuitem">
+              <div class="apps-item-icon">🪄</div>
+              <div class="apps-item-info">
+                <div class="apps-item-title">Quitar Fondo</div>
+                <div class="apps-item-desc">PNG transparente con IA</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Botón de Ajustes / OpenRouter -->
+        <button class="btn-header" id="openSettingsBtn" title="Configuración de OpenRouter">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span>Ajustes</span>
+          <span class="status-dot-key" id="settingsDot"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <section class="app-hero">
+      <div class="hero-badge">Jina Reader · Limpieza IA · LLM Ready</div>
+      <h1 class="hero-title">Website a Markdown para LLMs</h1>
+      <p class="hero-desc">
+        Extrae el contenido sustancial de artículos o páginas web convirtiéndolo a Markdown limpio mediante el motor reader de Jina. Con opción de pegar HTML crudo como fallback y refinado con IA para eliminar menús, cookies y estructurar metadatos YAML.
+      </p>
+    </section>
+
+    <div class="workflow-grid">
+      <!-- Columna Izquierda: Entrada de Datos -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>1. Origen del Contenido</span>
+          </div>
+          <div class="mode-pills">
+            <button class="mode-pill active" id="modeUrlBtn">🌐 Por URL</button>
+            <button class="mode-pill" id="modeHtmlBtn">📄 Pegar HTML</button>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <!-- Modo URL (Jina Reader) -->
+          <div class="input-group" id="urlInputContainer">
+            <label class="input-label">URL del Sitio Web o Artículo</label>
+            <div class="url-bar">
+              <input type="url" class="input-text" id="webUrlInput" placeholder="https://ejemplo.com/articulo" />
+              <button class="btn-primary" id="extractUrlBtn">
+                <svg id="extractUrlBtnIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14"/>
+                  <path d="m12 5 7 7-7 7"/>
+                </svg>
+                <span class="spinner" id="extractUrlBtnSpinner" style="display: none;"></span>
+                <span id="extractUrlBtnText">Extraer</span>
+              </button>
+            </div>
+            <span style="font-size: 11.5px; color: var(--text-secondary);">
+              Utiliza el endpoint directo <code style="color: var(--accent); font-family: 'Geist Mono', monospace;">r.jina.ai</code> para parsear sin scripts ni publicidad.
+            </span>
+          </div>
+
+          <!-- Modo HTML (Fallback) -->
+          <div class="input-group" id="htmlInputContainer" style="display: none;">
+            <label class="input-label">Código HTML Crudo</label>
+            <textarea class="html-textarea" id="rawHtmlInput" placeholder="Pegá acá el código fuente HTML (Ctrl+U en tu navegador)..."></textarea>
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn-primary" id="convertHtmlBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+                <span>Convertir a Markdown</span>
+              </button>
+            </div>
+            <span style="font-size: 11.5px; color: var(--text-secondary);">
+              Conversión 100% local en tu navegador con Turndown. Útil si la página requiere autenticación o bloquea bots.
+            </span>
+          </div>
+
+          <!-- Caja de Optimización IA (OpenRouter) -->
+          <div class="ai-box">
+            <div class="ai-box-header">
+              <div class="ai-box-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/>
+                </svg>
+                <span>2. Pulir y Optimizar con IA (OpenRouter)</span>
+              </div>
+              <span id="activeModelBadge" style="font-size: 11px; font-family: 'Geist Mono', monospace; color: var(--accent); background: #0C0C0E; border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px;">
+                Cargando...
+              </span>
+            </div>
+
+            <p class="ai-box-desc">
+              Depura los restos de menús, avisos de privacidad y footers irrelevantes. Genera metadatos YAML frontmatter con el título original, fecha y puntos clave sintetizados para LLMs.
+            </p>
+
+            <div class="ai-key-notice">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span id="aiKeyDot" class="status-dot-key"></span>
+                <span id="aiKeyStatusText" style="color: var(--text-secondary);">Verificando clave OpenRouter...</span>
+              </div>
+              <a href="../../index.html" class="api-key-link" id="aiKeyActionLink" title="Gestionar API Key en Inicio">
+                <span>Gestionar en Inicio</span>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
+            </div>
+
+            <button class="btn-primary" id="optimizeAiBtn" disabled>
+              <svg id="optimizeAiBtnIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/>
+              </svg>
+              <span class="spinner" id="optimizeAiBtnSpinner" style="display: none;"></span>
+              <span id="optimizeAiBtnText">Pulir para LLM con IA</span>
+            </button>
+            <div style="font-size: 11px; color: rgba(138,138,148,0.7); text-align: center;">
+              Se enviará únicamente el contenido de la página a OpenRouter bajo tu clave centralizada.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Resultado Markdown y Preview -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="tab-bar">
+            <button class="tab-btn active" id="tabCode">Markdown (.md)</button>
+            <button class="tab-btn" id="tabPreview">Vista Previa</button>
+            <button class="tab-btn" id="tabRaw">Extracción Cruda</button>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-secondary" id="copyBtn" title="Copiar al portapapeles">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              <span>Copiar</span>
+            </button>
+            <button class="btn-secondary" id="downloadBtn" title="Descargar archivo Markdown">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              <span>Descargar .md</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="editor-container">
+          <textarea class="editor-textarea" id="markdownOutput" placeholder="Acá aparecerá el contenido Markdown extraído con Jina Reader o convertido desde HTML..." spellcheck="false"></textarea>
+          <div class="preview-rendered" id="markdownPreview"></div>
+        </div>
+
+        <div class="stats-bar">
+          <span id="statWords">0 palabras</span>
+          <span>•</span>
+          <span id="statChars">0 caracteres</span>
+          <span>•</span>
+          <span id="statTokens">~0 tokens</span>
+          <span style="margin-left: auto;" id="statusNotice">Ingresá una URL para comenzar</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal de Ajustes Centralizados -->
+  <div class="modal-backdrop" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Ajustes de IA · OpenRouter</div>
+        <button class="modal-close-btn" id="closeSettingsBtn" aria-label="Cerrar modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <label style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #8A8A94;">
+              Modelo Activo para Optimización
+            </label>
+            <a href="../../index.html" class="api-key-link" title="Administrar modelos en Inicio">
+              <span>Administrar en Inicio</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+
+          <div class="models-list-box" id="modelsListBox">
+            <!-- Items dinámicos -->
+          </div>
+          <p style="font-size: 11px; color: rgba(138, 138, 148, 0.8); margin-top: 8px; line-height: 1.5;">
+            Para agregar nuevos modelos o remover existentes, usá los Ajustes de la página principal.
+          </p>
+        </div>
+
+        <!-- Clave OpenRouter Status -->
+        <div style="background: #0C0C0E; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span id="modalKeyDot" class="status-dot-key"></span>
+            <span style="font-size: 12px; color: #8A8A94;">
+              OpenRouter API Key: <strong id="modalKeyLabel" style="color: var(--text-primary);">No configurada</strong>
+            </span>
+          </div>
+          <a href="../../index.html" class="api-key-link" title="Configurar clave en Inicio">
+            <span id="modalKeyAction">Configurar en Inicio</span>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px;">
+          <button type="button" class="btn-secondary" id="cancelSettingsBtn">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div>© 2026 Tools Suite.</div>
+      <div class="footer-links">
+        <a href="https://github.com/Lautaro005/tools" target="_blank" rel="noreferrer">Código fuente (GitHub)</a>
+        <a href="../../changelog.html">Changelog</a>
+        <a href="../../privacy.html">Política de Privacidad</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Central Storage Keys
+    const STORAGE_KEY_API_KEY = 'codigos_ar_openrouter_key';
+    const STORAGE_KEY_ACTIVE_MODEL = 'codigos_ar_openrouter_model';
+    const STORAGE_KEY_SAVED_MODELS = 'codigos_ar_saved_models';
+    const DEFAULT_MODEL = 'google/gemini-2.0-flash-001';
+
+    // State
+    let currentSourceUrl = '';
+    let rawExtractedText = '';
+    let processedMarkdown = '';
+    let currentActiveTab = 'code';
+
+    // Turndown setup
+    let turndownService = null;
+    if (typeof TurndownService !== 'undefined') {
+      turndownService = new TurndownService({
+        headingStyle: 'atx',
+        codeBlockStyle: 'fenced',
+        bulletListMarker: '-'
+      });
+    }
+
+    // DOM Elements
+    const modeUrlBtn = document.getElementById('modeUrlBtn');
+    const modeHtmlBtn = document.getElementById('modeHtmlBtn');
+    const urlInputContainer = document.getElementById('urlInputContainer');
+    const htmlInputContainer = document.getElementById('htmlInputContainer');
+    const webUrlInput = document.getElementById('webUrlInput');
+    const extractUrlBtn = document.getElementById('extractUrlBtn');
+    const extractUrlBtnText = document.getElementById('extractUrlBtnText');
+    const extractUrlBtnIcon = document.getElementById('extractUrlBtnIcon');
+    const extractUrlBtnSpinner = document.getElementById('extractUrlBtnSpinner');
+    const rawHtmlInput = document.getElementById('rawHtmlInput');
+    const convertHtmlBtn = document.getElementById('convertHtmlBtn');
+    const optimizeAiBtn = document.getElementById('optimizeAiBtn');
+    const optimizeAiBtnText = document.getElementById('optimizeAiBtnText');
+    const optimizeAiBtnIcon = document.getElementById('optimizeAiBtnIcon');
+    const optimizeAiBtnSpinner = document.getElementById('optimizeAiBtnSpinner');
+    const activeModelBadge = document.getElementById('activeModelBadge');
+    const aiKeyDot = document.getElementById('aiKeyDot');
+    const aiKeyStatusText = document.getElementById('aiKeyStatusText');
+    const aiKeyActionLink = document.getElementById('aiKeyActionLink');
+    const markdownOutput = document.getElementById('markdownOutput');
+    const markdownPreview = document.getElementById('markdownPreview');
+    const copyBtn = document.getElementById('copyBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const statusNotice = document.getElementById('statusNotice');
+    const statWords = document.getElementById('statWords');
+    const statChars = document.getElementById('statChars');
+    const statTokens = document.getElementById('statTokens');
+
+    // Tabs
+    const tabCode = document.getElementById('tabCode');
+    const tabPreview = document.getElementById('tabPreview');
+    const tabRaw = document.getElementById('tabRaw');
+
+    // Header & Modal
+    const appsMenuBtn = document.getElementById('appsMenuBtn');
+    const appsMenu = document.getElementById('appsMenu');
+    const openSettingsBtn = document.getElementById('openSettingsBtn');
+    const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+    const cancelSettingsBtn = document.getElementById('cancelSettingsBtn');
+    const settingsModal = document.getElementById('settingsModal');
+    const settingsDot = document.getElementById('settingsDot');
+    const modelsListBox = document.getElementById('modelsListBox');
+    const modalKeyDot = document.getElementById('modalKeyDot');
+    const modalKeyLabel = document.getElementById('modalKeyLabel');
+    const modalKeyAction = document.getElementById('modalKeyAction');
+    const toastContainer = document.getElementById('toastContainer');
+
+    function showToast(msg, type) {
+      const el = document.createElement('div');
+      el.className = 'toast' + (type === 'success' ? ' toast-success' : type === 'error' ? ' toast-error' : '');
+      el.textContent = msg;
+      toastContainer.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => el.remove(), 300);
+      }, 3000);
+    }
+
+    // Key and Model Helpers
+    function getApiKey() {
+      return (localStorage.getItem(STORAGE_KEY_API_KEY) || '').trim();
+    }
+
+    function getActiveModel() {
+      return (localStorage.getItem(STORAGE_KEY_ACTIVE_MODEL) || DEFAULT_MODEL).trim();
+    }
+
+    function setActiveModel(model) {
+      localStorage.setItem(STORAGE_KEY_ACTIVE_MODEL, model);
+      refreshSettingsUI();
+    }
+
+    function getSavedModels() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_SAVED_MODELS);
+        if (!raw) return [DEFAULT_MODEL, 'meta-llama/llama-3.3-70b-instruct', 'deepseek/deepseek-chat'];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) && parsed.length > 0 ? parsed : [DEFAULT_MODEL];
+      } catch (e) {
+        return [DEFAULT_MODEL];
+      }
+    }
+
+    function refreshSettingsUI() {
+      const key = getApiKey();
+      const hasKey = !!key;
+      const activeModel = getActiveModel();
+
+      if (hasKey) {
+        settingsDot.classList.add('configured');
+        aiKeyDot.classList.add('configured');
+        aiKeyStatusText.textContent = 'API Key configurada en Inicio';
+        aiKeyActionLink.textContent = 'Gestionar en Inicio';
+        modalKeyDot.classList.add('configured');
+        modalKeyLabel.textContent = 'Configurada';
+        modalKeyLabel.style.color = 'var(--success)';
+        modalKeyAction.textContent = 'Gestionar en Inicio';
+      } else {
+        settingsDot.classList.remove('configured');
+        aiKeyDot.classList.remove('configured');
+        aiKeyStatusText.textContent = 'API Key no configurada';
+        aiKeyActionLink.textContent = 'Configurar en Inicio';
+        modalKeyDot.classList.remove('configured');
+        modalKeyLabel.textContent = 'No configurada';
+        modalKeyLabel.style.color = '#eab308';
+        modalKeyAction.textContent = 'Configurar en Inicio';
+      }
+
+      const shortModel = activeModel.split('/')[1] || activeModel;
+      activeModelBadge.textContent = shortModel;
+      activeModelBadge.title = activeModel;
+
+      const saved = getSavedModels();
+      if (!saved.includes(activeModel)) {
+        saved.unshift(activeModel);
+      }
+      modelsListBox.innerHTML = '';
+      saved.forEach(m => {
+        const item = document.createElement('div');
+        const isActive = m === activeModel;
+        item.className = `model-item ${isActive ? 'active' : ''}`;
+        item.innerHTML = `
+          <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${m}</span>
+          ${isActive ? '<span style="font-size: 10px; text-transform: uppercase;">Activo</span>' : ''}
+        `;
+        item.onclick = () => {
+          setActiveModel(m);
+          showToast(`Modelo activo: ${m.split('/')[1] || m}`);
+        };
+        modelsListBox.appendChild(item);
+      });
+
+      if (processedMarkdown && hasKey) {
+        optimizeAiBtn.disabled = false;
+      } else if (!hasKey) {
+        optimizeAiBtn.disabled = true;
+      }
+    }
+
+    // Apps dropdown toggle
+    appsMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      appsMenu.classList.toggle('show');
+    });
+    window.addEventListener('click', () => {
+      appsMenu.classList.remove('show');
+    });
+
+    // Settings Modal listeners
+    openSettingsBtn.addEventListener('click', () => {
+      refreshSettingsUI();
+      settingsModal.classList.add('show');
+    });
+    closeSettingsBtn.addEventListener('click', () => settingsModal.classList.remove('show'));
+    cancelSettingsBtn.addEventListener('click', () => settingsModal.classList.remove('show'));
+    settingsModal.addEventListener('click', (e) => {
+      if (e.target === settingsModal) settingsModal.classList.remove('show');
+    });
+
+    // Switch Input Modes (URL vs Raw HTML)
+    modeUrlBtn.addEventListener('click', () => {
+      modeUrlBtn.classList.add('active');
+      modeHtmlBtn.classList.remove('active');
+      urlInputContainer.style.display = 'flex';
+      htmlInputContainer.style.display = 'none';
+    });
+
+    modeHtmlBtn.addEventListener('click', () => {
+      modeHtmlBtn.classList.add('active');
+      modeUrlBtn.classList.remove('active');
+      urlInputContainer.style.display = 'none';
+      htmlInputContainer.style.display = 'flex';
+    });
+
+    // Extract via Jina Reader
+    async function extractFromJina(url) {
+      if (!url || !url.trim()) {
+        showToast('Ingresá una URL válida', 'error');
+        return;
+      }
+
+      let cleanUrl = url.trim();
+      if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+        cleanUrl = 'https://' + cleanUrl;
+      }
+
+      currentSourceUrl = cleanUrl;
+      statusNotice.textContent = 'Consultando Jina Reader (r.jina.ai)...';
+      extractUrlBtn.disabled = true;
+      extractUrlBtnText.textContent = 'Extrayendo...';
+      extractUrlBtnIcon.style.display = 'none';
+      extractUrlBtnSpinner.style.display = 'inline-block';
+
+      try {
+        const jinaEndpoint = `https://r.jina.ai/${cleanUrl}`;
+        const response = await fetch(jinaEndpoint, {
+          headers: {
+            'Accept': 'text/plain'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Jina Reader HTTP ${response.status}`);
+        }
+
+        const text = await response.text();
+        if (!text || text.trim().length === 0) {
+          throw new Error('La respuesta de Jina Reader fue vacía');
+        }
+
+        rawExtractedText = text;
+        processedMarkdown = text;
+        markdownOutput.value = processedMarkdown;
+        renderMarkdownPreview(processedMarkdown);
+        updateStats(processedMarkdown);
+
+        statusNotice.textContent = 'Contenido extraído con éxito vía Jina Reader';
+        showToast('Página web procesada en Markdown', 'success');
+
+        if (getApiKey()) {
+          optimizeAiBtn.disabled = false;
+        }
+      } catch (err) {
+        console.error('Error al consultar Jina Reader:', err);
+        statusNotice.textContent = `Error: ${err.message}. Probá con Pegar HTML.`;
+        showToast(`Fallo en Jina Reader: ${err.message}`, 'error');
+      } finally {
+        extractUrlBtn.disabled = false;
+        extractUrlBtnText.textContent = 'Extraer';
+        extractUrlBtnIcon.style.display = '';
+        extractUrlBtnSpinner.style.display = 'none';
+      }
+    }
+
+    extractUrlBtn.addEventListener('click', () => {
+      extractFromJina(webUrlInput.value);
+    });
+
+    webUrlInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        extractFromJina(webUrlInput.value);
+      }
+    });
+
+    // Convert Raw HTML to Markdown via Turndown
+    convertHtmlBtn.addEventListener('click', () => {
+      const html = rawHtmlInput.value.trim();
+      if (!html) {
+        showToast('Pegá código HTML primero', 'error');
+        return;
+      }
+
+      try {
+        if (!turndownService) {
+          throw new Error('Servicio Turndown no inicializado');
+        }
+
+        statusNotice.textContent = 'Convirtiendo HTML a Markdown con Turndown...';
+        const md = turndownService.turndown(html);
+        currentSourceUrl = 'HTML pegado';
+        rawExtractedText = md;
+        processedMarkdown = md;
+        markdownOutput.value = processedMarkdown;
+        renderMarkdownPreview(processedMarkdown);
+        updateStats(processedMarkdown);
+
+        statusNotice.textContent = 'HTML convertido a Markdown exitosamente';
+        showToast('HTML convertido con éxito', 'success');
+
+        if (getApiKey()) {
+          optimizeAiBtn.disabled = false;
+        }
+      } catch (err) {
+        console.error('Error al convertir HTML:', err);
+        showToast('Error al parsear el código HTML', 'error');
+      }
+    });
+
+    // AI Polishing via OpenRouter
+    optimizeAiBtn.addEventListener('click', async () => {
+      const apiKey = getApiKey();
+      if (!apiKey) {
+        showToast('Debes configurar tu OpenRouter API Key en Inicio', 'error');
+        settingsModal.classList.add('show');
+        return;
+      }
+
+      if (!processedMarkdown && !rawExtractedText) {
+        showToast('Primero extrae una URL o pega HTML', 'error');
+        return;
+      }
+
+      const activeModel = getActiveModel();
+      optimizeAiBtn.disabled = true;
+      optimizeAiBtnText.textContent = 'Procesando con IA...';
+      optimizeAiBtnIcon.style.display = 'none';
+      optimizeAiBtnSpinner.style.display = 'inline-block';
+      statusNotice.textContent = `Optimizando con ${activeModel.split('/')[1] || activeModel}...`;
+
+      const promptSystem = `Eres un procesador experto de contenido web que transforma páginas extraídas en Markdown estricto, limpio y de alta fidelidad, especialmente formateado para ser consumido por LLMs, agentes autónomos y arquitecturas RAG.
+Instrucciones obligatorias:
+1. Genera un bloque YAML frontmatter al comienzo:
+---
+title: "<Título del artículo o página web>"
+source_url: "${currentSourceUrl || 'Desconocido'}"
+author: "<Autor o medio si existe>"
+published_date: "<Fecha de publicación si figura>"
+summary: "<Resumen conciso del contenido central en 2-3 oraciones>"
+key_takeaways: [<puntos clave principales>]
+processed_at: "${new Date().toISOString()}"
+---
+2. Purga y elimina de raíz: banners de cookies, botones para compartir en redes, menús de navegación residuales, sugerencias de otros artículos, avisos legales del footer y publicidad.
+3. Estandariza encabezados usando # para título principal, ## para secciones y ### para subtítulos.
+4. Preserva el contenido informativo, citas, códigos, tablas y listas sin alterar el significado fáctico.
+5. Devuelve ÚNICAMENTE el texto Markdown procesado.`;
+
+      const textToSend = rawExtractedText || processedMarkdown;
+      const maxChars = 85000;
+      const truncatedText = textToSend.length > maxChars ? textToSend.substring(0, maxChars) + "\n\n[...Texto truncado para tamaño de contexto...]" : textToSend;
+
+      try {
+        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'HTTP-Referer': window.location.origin || 'https://lautaro005.github.io',
+            'X-Title': 'Tools Suite - Website a Markdown',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: activeModel,
+            messages: [
+              { role: 'system', content: promptSystem },
+              { role: 'user', content: `Por favor limpia, estructura y optimiza este contenido web para LLM:\n\n${truncatedText}` }
+            ],
+            temperature: 0.2
+          })
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error?.message || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        const content = data.choices?.[0]?.message?.content;
+
+        if (content) {
+          processedMarkdown = content.trim();
+          markdownOutput.value = processedMarkdown;
+          renderMarkdownPreview(processedMarkdown);
+          updateStats(processedMarkdown);
+          statusNotice.textContent = 'Optimización IA completada';
+          showToast('¡Markdown depurado y optimizado con IA!', 'success');
+        } else {
+          throw new Error('Respuesta vacía de OpenRouter');
+        }
+      } catch (err) {
+        console.error('Error en OpenRouter:', err);
+        statusNotice.textContent = `Error IA: ${err.message}`;
+        showToast(`Error al procesar con IA: ${err.message}`, 'error');
+      } finally {
+        optimizeAiBtn.disabled = false;
+        optimizeAiBtnText.textContent = 'Pulir para LLM con IA';
+        optimizeAiBtnIcon.style.display = '';
+        optimizeAiBtnSpinner.style.display = 'none';
+      }
+    });
+
+    // Render Preview
+    function renderMarkdownPreview(md) {
+      if (typeof marked !== 'undefined') {
+        markdownPreview.innerHTML = marked.parse(md || '');
+        if (typeof hljs !== 'undefined') {
+          markdownPreview.querySelectorAll('pre code').forEach(block => {
+            hljs.highlightElement(block);
+          });
+        }
+      } else {
+        markdownPreview.textContent = md;
+      }
+    }
+
+    // Tabs switching
+    tabCode.addEventListener('click', () => {
+      currentActiveTab = 'code';
+      tabCode.classList.add('active');
+      tabPreview.classList.remove('active');
+      tabRaw.classList.remove('active');
+      markdownOutput.style.display = 'block';
+      markdownPreview.classList.remove('visible');
+      markdownOutput.value = processedMarkdown;
+    });
+
+    tabPreview.addEventListener('click', () => {
+      currentActiveTab = 'preview';
+      tabPreview.classList.add('active');
+      tabCode.classList.remove('active');
+      tabRaw.classList.remove('active');
+      markdownOutput.style.display = 'none';
+      markdownPreview.classList.add('visible');
+      renderMarkdownPreview(markdownOutput.value || processedMarkdown);
+    });
+
+    tabRaw.addEventListener('click', () => {
+      currentActiveTab = 'raw';
+      tabRaw.classList.add('active');
+      tabCode.classList.remove('active');
+      tabPreview.classList.remove('active');
+      markdownOutput.style.display = 'block';
+      markdownPreview.classList.remove('visible');
+      markdownOutput.value = rawExtractedText || 'No hay contenido crudo extraído aún.';
+    });
+
+    markdownOutput.addEventListener('input', () => {
+      if (currentActiveTab === 'code') {
+        processedMarkdown = markdownOutput.value;
+      }
+      updateStats(markdownOutput.value);
+    });
+
+    // Stats
+    function updateStats(text) {
+      const words = (text.match(/\S+/g) || []).length;
+      const chars = text.length;
+      const tokens = Math.round(words * 1.35);
+
+      statWords.textContent = `${words.toLocaleString()} palabras`;
+      statChars.textContent = `${chars.toLocaleString()} caracteres`;
+      statTokens.textContent = `~${tokens.toLocaleString()} tokens`;
+    }
+
+    // Copy to clipboard
+    copyBtn.addEventListener('click', () => {
+      const textToCopy = markdownOutput.value || processedMarkdown;
+      if (!textToCopy) {
+        showToast('No hay contenido para copiar', 'error');
+        return;
+      }
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        showToast('Markdown copiado al portapapeles', 'success');
+      }).catch(() => {
+        showToast('Error al copiar al portapapeles', 'error');
+      });
+    });
+
+    // Download .md
+    downloadBtn.addEventListener('click', () => {
+      const text = markdownOutput.value || processedMarkdown;
+      if (!text) {
+        showToast('No hay contenido para descargar', 'error');
+        return;
+      }
+      let filename = 'pagina-web';
+      if (currentSourceUrl && currentSourceUrl.startsWith('http')) {
+        try {
+          const u = new URL(currentSourceUrl);
+          filename = u.hostname.replace(/[^a-z0-9]/gi, '_') + (u.pathname.length > 1 ? u.pathname.replace(/[^a-z0-9]/gi, '_') : '');
+        } catch (e) {}
+      }
+      const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${filename}.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(`Descargando ${filename}.md`, 'success');
+    });
+
+    // Initialize UI
+    refreshSettingsUI();
+  </script>
+</body>
+</html>
