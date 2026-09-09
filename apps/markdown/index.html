@@ -214,6 +214,50 @@
       color: var(--accent);
     }
 
+    .btn-settings {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+      padding: 0 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .btn-settings:hover {
+      border-color: rgba(212, 168, 67, 0.3);
+      color: var(--text-primary);
+    }
+
+    .btn-settings.configured {
+      border-color: rgba(212, 168, 67, 0.4);
+      background: rgba(212, 168, 67, 0.1);
+      color: var(--accent);
+    }
+
+    .btn-settings.configured:hover {
+      background: rgba(212, 168, 67, 0.2);
+    }
+
+    .btn-settings .settings-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: none;
+    }
+
+    .btn-settings.configured .settings-dot {
+      display: inline-block;
+    }
+
     .btn-header.active {
       border-color: var(--accent);
       background: var(--accent-dim);
@@ -1948,6 +1992,20 @@
                 <div class="apps-item-desc">Editor, visor y chat IA</div>
               </div>
             </a>
+            <a href="../pdf-markdown/index.html" class="apps-dropdown-item" role="menuitem">
+              <div class="apps-item-icon">📑</div>
+              <div class="apps-item-info">
+                <div class="apps-item-title">PDF a Markdown</div>
+                <div class="apps-item-desc">Extracción y formato LLM</div>
+              </div>
+            </a>
+            <a href="../web-markdown/index.html" class="apps-dropdown-item" role="menuitem">
+              <div class="apps-item-icon">🌐</div>
+              <div class="apps-item-info">
+                <div class="apps-item-title">Website a Markdown</div>
+                <div class="apps-item-desc">Reader y limpieza IA</div>
+              </div>
+            </a>
             <a href="../transfer/index.html" class="apps-dropdown-item" role="menuitem">
               <div class="apps-item-icon">📡</div>
               <div class="apps-item-info">
@@ -1976,13 +2034,13 @@
         </div>
 
         <!-- Boton de Ajustes / OpenRouter -->
-        <button class="btn-header" id="openSettingsBtn" title="Configuración de OpenRouter e IA">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+        <button class="btn-settings" id="openSettingsBtn" title="Ajustes de Markdown Editor (Modelos y resumen IA)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
           </svg>
-          <span>Ajustes IA</span>
-          <span class="status-dot-key" id="headerKeyDot"></span>
+          <span class="hidden sm:inline">Ajustes</span>
+          <span class="settings-dot" id="headerKeyDot"></span>
         </button>
       </div>
     </div>
@@ -2965,6 +3023,7 @@ saludar("Lautaro");
 
         const hasKey = !!getApiKey();
         headerKeyDot.classList.toggle('configured', hasKey);
+        openSettingsBtn.classList.toggle('configured', hasKey);
         chatApiKeyWarning.style.display = hasKey ? 'none' : 'flex';
       }
 

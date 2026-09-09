@@ -181,6 +181,44 @@ export const Header: React.FC<HeaderProps> = ({
                       </div>
                     </a>
 
+                    {/* PDF a Markdown */}
+                    <a
+                      href="../pdf-markdown/index.html"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-[#1E1E24] group"
+                      role="menuitem"
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#1E1E24] bg-[#0C0C0E] text-base group-hover:border-[#D4A843]/30">
+                        📑
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <div className="text-xs font-semibold text-[#F2F2F0] group-hover:text-[#D4A843] transition-colors">
+                          PDF a Markdown
+                        </div>
+                        <div className="text-[11px] text-[#8A8A94] truncate">
+                          Extracción y formato LLM
+                        </div>
+                      </div>
+                    </a>
+
+                    {/* Website a Markdown */}
+                    <a
+                      href="../web-markdown/index.html"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-[#1E1E24] group"
+                      role="menuitem"
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#1E1E24] bg-[#0C0C0E] text-base group-hover:border-[#D4A843]/30">
+                        🌐
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <div className="text-xs font-semibold text-[#F2F2F0] group-hover:text-[#D4A843] transition-colors">
+                          Website a Markdown
+                        </div>
+                        <div className="text-[11px] text-[#8A8A94] truncate">
+                          Reader y limpieza IA
+                        </div>
+                      </div>
+                    </a>
+
                     {/* Transfer (AirDrop & QR) */}
                     <a
                       href="../transfer/index.html"
