@@ -1182,6 +1182,100 @@
       color: var(--accent);
     }
 
+    /* Reasoning Collapsible Block */
+    .reasoning-accordion {
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #08080B;
+      overflow: hidden;
+    }
+
+    .reasoning-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.02);
+      transition: var(--transition);
+      list-style: none;
+    }
+
+    .reasoning-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .reasoning-summary:hover {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+    }
+
+    .reasoning-title-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+
+    .reasoning-title-group svg {
+      color: var(--accent);
+    }
+
+    .btn-copy-reasoning {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 3px 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .btn-copy-reasoning:hover {
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .reasoning-chevron {
+      transition: transform 0.2s ease;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .reasoning-accordion[open] .reasoning-chevron {
+      transform: rotate(180deg);
+    }
+
+    .reasoning-body {
+      padding: 10px 12px;
+      border-top: 1px solid var(--border);
+      background: #050507;
+      color: #9E9EA8;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .reasoning-body::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .reasoning-body::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
+
     .assistant-actions {
       display: flex;
       gap: 6px;
@@ -2908,14 +3002,15 @@ ${text}`;
           }
 
           const data = await response.json();
-          const assistantReply = data.choices?.[0]?.message?.content || 'No se recibió una respuesta válida.';
+          const choiceMsg = data.choices?.[0]?.message || {};
+          const { reasoning, content: finalContent } = extractReasoningAndContent(choiceMsg);
 
-          // Guardar en historial
+          // Guardar en historial (respuesta limpia sin el bloque de razonamiento)
           chatHistory.push({ role: 'user', content: text });
-          chatHistory.push({ role: 'assistant', content: assistantReply });
+          chatHistory.push({ role: 'assistant', content: finalContent });
 
           // Actualizar la burbuja del asistente con el resultado y botones de acción
-          renderAssistantReply(loadingBubble, assistantReply);
+          renderAssistantReply(loadingBubble, finalContent, reasoning);
         } catch (err) {
           console.error('Error en llamada OpenRouter:', err);
           loadingBubble.innerHTML = `
@@ -2933,6 +3028,39 @@ ${text}`;
         }
       }
 
+      function extractReasoningAndContent(messageObj) {
+        let reasoning = (messageObj?.reasoning || messageObj?.reasoning_content || '').trim();
+        let rawContent = (messageObj?.content || '').trim();
+
+        // Extraer etiquetas <think> o <thought> de modelos de razonamiento (ej: DeepSeek-R1, QwQ, etc.)
+        const extractedThoughts = [];
+        const matches = rawContent.matchAll(/<(think|thought)>([\s\S]*?)(?:<\/\1>|$)/gi);
+        for (const m of matches) {
+          if (m[2] && m[2].trim()) {
+            extractedThoughts.push(m[2].trim());
+          }
+        }
+
+        if (extractedThoughts.length > 0) {
+          const combinedThoughts = extractedThoughts.join('\n\n');
+          reasoning = reasoning ? `${reasoning}\n\n${combinedThoughts}` : combinedThoughts;
+          rawContent = rawContent.replace(/<(think|thought)>([\s\S]*?)(?:<\/\1>|$)/gi, '').trim();
+        }
+
+        let finalContent = rawContent;
+        if (!finalContent && reasoning) {
+          finalContent = reasoning;
+          reasoning = '';
+        } else if (!finalContent) {
+          finalContent = 'No se recibió una respuesta válida.';
+        }
+
+        return {
+          reasoning: reasoning.trim(),
+          content: finalContent.trim()
+        };
+      }
+
       function appendChatBubble(role, content) {
         const bubble = document.createElement('div');
         bubble.className = `chat-bubble ${role}`;
@@ -2948,16 +3076,40 @@ ${text}`;
         return bubble;
       }
 
-      function renderAssistantReply(bubbleEl, replyMarkdown) {
+      function renderAssistantReply(bubbleEl, replyMarkdown, reasoning = '') {
         const parsedHtml = renderMarkdown(replyMarkdown);
+        const hasReasoning = !!reasoning && reasoning.trim().length > 0;
+
+        let reasoningHtml = '';
+        if (hasReasoning) {
+          reasoningHtml = `
+            <details class="reasoning-accordion">
+              <summary class="reasoning-summary">
+                <div class="reasoning-title-group">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.314 2.015 6.16 4.9 7.37.28.12.46.39.46.7v1.93c0 .55.45 1 1 1h7.28c.55 0 1-.45 1-1V18.07c0-.31.18-.58.46-.7A8.001 8.001 0 0 0 20 10a8 8 0 0 0-8-8z"/><line x1="9" y1="22" x2="15" y2="22"/></svg>
+                  <span>Razonamiento del modelo</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <button type="button" class="btn-copy-reasoning" title="Copiar razonamiento">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  </button>
+                  <svg class="reasoning-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+              </summary>
+              <div class="reasoning-body">${escapeHtml(reasoning)}</div>
+            </details>
+          `;
+        }
+
         bubbleEl.innerHTML = `
+          ${reasoningHtml}
           <div class="assistant-body">${parsedHtml}</div>
           <div class="assistant-actions">
-            <button class="btn-assistant-action" data-action="copy" title="Copiar al portapapeles">
+            <button class="btn-assistant-action" data-action="copy" title="Copiar respuesta al portapapeles">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
               Copiar
             </button>
-            <button class="btn-assistant-action" data-action="insert" title="Insertar al final del editor">
+            <button class="btn-assistant-action" data-action="insert" title="Insertar respuesta al final del editor">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Insertar
             </button>
@@ -2968,7 +3120,19 @@ ${text}`;
           </div>
         `;
 
-        // Eventos de los botones de acción
+        if (hasReasoning) {
+          const copyReasoningBtn = bubbleEl.querySelector('.btn-copy-reasoning');
+          if (copyReasoningBtn) {
+            copyReasoningBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              navigator.clipboard.writeText(reasoning);
+              showToast('Razonamiento copiado al portapapeles');
+            });
+          }
+        }
+
+        // Eventos de los botones de acción (operan sobre la respuesta limpia sin razonamiento)
         const copyBtn = bubbleEl.querySelector('[data-action="copy"]');
         const insertBtn = bubbleEl.querySelector('[data-action="insert"]');
         const replaceBtn = bubbleEl.querySelector('[data-action="replace"]');
