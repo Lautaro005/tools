@@ -841,6 +841,21 @@
       border: 1px solid var(--border);
     }
 
+    .app-card-external-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      transition: var(--transition);
+      margin-left: auto;
+      padding-left: 8px;
+    }
+
+    .app-card:hover .app-card-external-arrow {
+      color: var(--accent);
+      transform: translate(2px, -2px);
+    }
+
     /* Footer */
     footer {
       border-top: 1px solid var(--border);
@@ -1187,6 +1202,12 @@
               <span class="tag">Presupuesto</span>
               <span class="tag">Personal</span>
             </div>
+            <span class="app-card-external-arrow" title="Aplicación externa" aria-label="Aplicación externa">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="7 7 17 7 17 17"></polyline>
+              </svg>
+            </span>
           </div>
         </a>
       </div>
