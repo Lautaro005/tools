@@ -46,3 +46,8 @@ Este archivo contiene la especificación extendida de Tools Suite y sus aplicaci
 ## 5. FinanzAR
 - **Ruta externa:** `https://finanzar-delta.vercel.app`
 - **Propósito:** Gestión ágil de presupuestos, categorías de gastos y seguimiento de finanzas personales.
+
+## 6. DokBot (Bots de Soporte con IA)
+- **Ruta externa:** `https://dokbot-delta.vercel.app`
+- **Tecnología:** Next.js (App Router), Supabase (Auth, Storage, pgvector), widget `<script>` embebible.
+- **Propósito:** Crear bots de soporte con IA embebibles en cualquier sitio, con base de conocimiento RAG (carga multi-formato: PDF, TXT, MD, DOCX, XLSX), playground en vivo y BYO API key (OpenRouter, Groq, CheaperInference, OrcaRouter).

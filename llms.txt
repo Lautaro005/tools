@@ -11,6 +11,7 @@ Suite de aplicaciones web estáticas y autónomas desarrolladas por el equipo de
 - [Transfer](https://lautaro005.github.io/tools/apps/transfer/): Transferencia instantánea de archivos y textos entre dispositivos en la misma red local estilo AirDrop con radar visual y opción de código QR dinámico para escanear y recibir en teléfonos móviles, 100% P2P sin subir datos a servidores externos.
 - [Quitar Fondo](https://lautaro005.github.io/tools/apps/fondo/): Eliminador de fondos inteligente para fotos e imágenes 100% en el cliente mediante inteligencia artificial neural local (BRIA RMBG-1.4 / WebAssembly) y modo por color, con exportación garantizada en formato PNG con canal alfa transparente de 32 bits (cero fondos cuadriculados simulados).
 - [FinanzAR](https://finanzar-delta.vercel.app): Aplicación web de gestión de finanzas personales, presupuestos y control de ingresos y gastos.
+- [DokBot](https://dokbot-delta.vercel.app): Bots de soporte con IA embebibles en cualquier sitio, con base de conocimiento RAG y BYO API key.
 
 ## Información Técnica y Privacidad
 

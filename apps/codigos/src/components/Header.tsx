@@ -278,6 +278,28 @@ export const Header: React.FC<HeaderProps> = ({
                         </div>
                       </div>
                     </a>
+
+                    {/* DokBot (External) */}
+                    <a
+                      href="https://dokbot-delta.vercel.app"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-[#1E1E24] group"
+                      role="menuitem"
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#1E1E24] bg-[#0C0C0E] text-base group-hover:border-[#D4A843]/30">
+                        🤖
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <div className="flex items-center justify-between text-xs font-semibold text-[#F2F2F0] group-hover:text-[#D4A843] transition-colors">
+                          <span>DokBot</span>
+                          <ExternalLink size={12} className="text-[#8A8A94] group-hover:text-[#D4A843]" />
+                        </div>
+                        <div className="text-[11px] text-[#8A8A94] truncate">
+                          Bots de soporte con IA
+                        </div>
+                      </div>
+                    </a>
                   </div>
                 </motion.div>
               )}
