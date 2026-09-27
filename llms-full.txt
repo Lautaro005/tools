@@ -51,3 +51,8 @@ Este archivo contiene la especificación extendida de Tools Suite y sus aplicaci
 - **Ruta externa:** `https://dokbot-delta.vercel.app`
 - **Tecnología:** Next.js (App Router), Supabase (Auth, Storage, pgvector), widget `<script>` embebible.
 - **Propósito:** Crear bots de soporte con IA embebibles en cualquier sitio, con base de conocimiento RAG (carga multi-formato: PDF, TXT, MD, DOCX, XLSX), playground en vivo y BYO API key (OpenRouter, Groq, CheaperInference, OrcaRouter).
+
+## 7. Brain (Memoria Compartida para IA)
+- **Ruta externa:** `https://lautaro005.github.io/brain/`
+- **Tecnología:** Webapp estática, almacenamiento local.
+- **Propósito:** Memoria compartida local para todos tus asistentes de IA.
